@@ -4,7 +4,7 @@ INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','jar','/opt/amaz
 INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','detailFactoryPath','/opt/amazon/ebook/lib/detail_view.jar');
 INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','detailFactoryClass','com.amazon.ebook.booklet.reader.impl.detail.ReaderDetailViewFactory');
 
-INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','maxGoTime','30');
+INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','maxGoTime','0');
 INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','maxPauseTime','60');
 
 INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','default-chrome-style','NH');
