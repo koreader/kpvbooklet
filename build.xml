@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="jar" name="KPVBooklet">
+
+    <property name="main-class"  value="com.github.chrox.kpvbooklet.KPVBooklet"/>
+
+    <property environment="env"/>
+
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.4"/>
+    <property name="source" value="1.4"/>
+
+    <!-- environment variable for the location of Amazon's jar files -->
+    <target name="checkProperties">
+      <fail unless="env.KINDLE_EBOOK">"KINDLE_EBOOK must be set</fail>
+      <echo message="KINDLE_EBOOK is set to = ${env.KINDLE_EBOOK}"/>
+    </target>
+
+    <path id="local.classpath">
+		<pathelement location="${env.KINDLE_EBOOK}/lib/json_simple-1.1.jar"/>
+		<pathelement location="${env.KINDLE_EBOOK}/lib/utilities.jar"/>
+        <pathelement location="${env.KINDLE_EBOOK}/lib/kaf.jar"/>
+    </path>
+
+    <target name="compile" depends="checkProperties">
+        <mkdir dir="build/classes"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="local.classpath"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/${ant.project.name}.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+	
+	<target name="dev" depends="jar">
+		<exec command="scp build/jar/${ant.project.name}.jar root@kindle:/opt/amazon/ebook/booklet/${ant.project.name}.jar" />
+	</target>
+	
+	<target name="dev+restart" depends="dev">
+		<exec command="ssh root@kindle '/sbin/restart framework &amp;'" />
+	</target>
+
+</project>
