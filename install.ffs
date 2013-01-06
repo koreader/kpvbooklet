@@ -1,0 +1,40 @@
+#!/bin/sh
+OTA=com.lab126.blanket.ota
+
+progress()
+{
+	lipc-send-event $OTA otaSplashProgress -i $1
+	local x=48
+	local y=11
+	eips 0 $y "                                                ";
+	eips $((($x - $(expr length "$2")) / 2)) $y "$2"
+	sleep 3
+}
+
+fail()
+{
+	lipc-send-event $OTA otaSplashError -s "${1}"
+	sleep 10
+	exit 1;
+}
+
+VERSION=`cut -d ' ' -f 2 /etc/prettyversion.txt`
+[ "$VERSION" \< "5.3.0" ] && fail "Unsupported firmware version" "$VERSION"
+
+progress 10 "Mounting r/w"
+mntroot rw || fail "Unable to mount r/w"
+
+progress 20 "Installing KPVBooklet.jar"
+cp KPVBooklet.jar /opt/amazon/ebook/booklet/ || fail "Unable to copy KPVBooklet.jar"
+
+progress 40 "Backuping appreg.db"
+[ ! -f /var/local/appreg.db.bak ] && cp /var/local/appreg.db /var/local/appreg.db.bak
+
+progress 60 "Updating appreg.db"
+sqlite3 /var/local/appreg.db < mimes.sql
+
+progress 80 "Mounting ro"
+mntroot ro || fail "Unable to mount ro"
+
+progress 100 "Installation complete."
+

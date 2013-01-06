@@ -38,6 +38,12 @@
             </manifest>
         </jar>
     </target>
+	
+	<target name="bin" depends="jar">
+		<exec executable="bash">
+			<arg line="./build-updates.sh"/>
+		</exec>
+    </target>
 
     <target name="clean">
         <delete dir="build"/>
