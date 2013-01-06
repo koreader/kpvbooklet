@@ -1,6 +1,6 @@
 package com.github.chrox.kpvbooklet;
 
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Date;
@@ -93,9 +93,9 @@ public class KPVBooklet extends AbstractBooklet {
 			} catch (InterruptedException e) {
 				logger.xIb(e.toString(), e);
 			}
-			// update content catlog after kpdfviewer finished
-			updateCC(content_path, 0.0f);
-			// sent go home lipc event after kpdfviewer finished
+			// update content catlog after kpdfviewer exits
+			updateCC(content_path, extractLastPercent(content_path));
+			// sent go home lipc event after kpdfviewer exits
 			try {
 				Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd start app://com.lab126.booklet.home");
 			} catch (IOException e) {
@@ -121,6 +121,39 @@ public class KPVBooklet extends AbstractBooklet {
 		String json_change = "{\"commands\":[{\"update\":{\"uuid\":\"" + uuid + "\",\"lastAccess\":" + lastAccess + ",\"percentFinished\":" + percentFinished + ",\"displayTags\":[\"" + tag + "\"]" + "}}],\"type\":\"ChangeRequest\",\"id\":1}";
 		CCRequest("change", json_change);
 		logger.hmA("UpdateCC:file:" + path + ",lastAccess:" + lastAccess + ",percentFinished:" + percentFinished);
+	}
+	
+	/**
+	 * Extract last_percent in document history file
+	 * @param file path
+	 */
+	private float extractLastPercent(String path) {
+		float last_percent = 0.0f;
+		String history_dir = "/mnt/us/kindlepdfviewer/history/";
+		int slash = path.lastIndexOf('/');
+		String parentname = (slash == -1) ? "" : path.substring(0, slash+1);
+		String basename = (slash == -1) ? "" : path.substring(slash+1);
+		String histroypath = history_dir + "[" + parentname.replace('/','#') + "] " + basename + ".lua";
+		logger.hmA("found history file: " + histroypath);
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(histroypath)));
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (line.indexOf("[\"last_percent\"]") > -1) {
+					logger.hmA("found last_percent line: " + line);
+					int equal = line.lastIndexOf('=');
+					int comma = line.lastIndexOf(',');
+					if (equal != -1 && comma != -1) {
+						String value = line.substring(equal+1, comma).trim();
+						last_percent = Float.parseFloat(value) * 100;
+					}
+				}
+		    }
+		    br.close();
+		} catch (IOException e) {
+			logger.xIb(e.toString(), e); 
+		}
+		return last_percent;
 	}
 	
 	/**
