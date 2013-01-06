@@ -46,11 +46,21 @@
     <target name="clean-build" depends="clean,jar"/>
 	
 	<target name="dev" depends="jar">
-		<exec command="scp build/jar/${ant.project.name}.jar root@kindle:/opt/amazon/ebook/booklet/${ant.project.name}.jar" />
+		<exec executable="ssh">
+			<arg line="root@kindle 'mntroot rw &amp;'"/>
+		</exec>
+		<exec executable="scp">
+			<arg line="build/jar/${ant.project.name}.jar root@kindle:/opt/amazon/ebook/booklet/${ant.project.name}.jar"/>
+		</exec>
+		<exec executable="ssh">
+			<arg line="root@kindle 'mntroot ro &amp;'"/>
+		</exec>
 	</target>
 	
 	<target name="dev+restart" depends="dev">
-		<exec command="ssh root@kindle '/sbin/restart framework &amp;'" />
+		<exec executable="ssh">
+			<arg line="root@kindle '/sbin/restart framework &amp;'"/>
+		</exec>
 	</target>
 
 </project>
