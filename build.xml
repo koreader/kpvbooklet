@@ -18,7 +18,6 @@
 
     <path id="local.classpath">
 		<pathelement location="${env.KINDLE_EBOOK}/lib/json_simple-1.1.jar"/>
-		<pathelement location="${env.KINDLE_EBOOK}/lib/utilities.jar"/>
         <pathelement location="${env.KINDLE_EBOOK}/lib/kaf.jar"/>
     </path>
 

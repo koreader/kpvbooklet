@@ -19,7 +19,7 @@ fail()
 }
 
 VERSION=`cut -d ' ' -f 2 /etc/prettyversion.txt`
-[ "$VERSION" \< "5.3.0" ] && fail "Unsupported firmware version" "$VERSION"
+[ "$VERSION" \< "5.1.2" ] && fail "Unsupported firmware version" "$VERSION"
 
 progress 10 "Mounting r/w"
 mntroot rw || fail "Unable to mount r/w"
@@ -37,4 +37,3 @@ progress 80 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
 
 progress 100 "Installation complete."
-

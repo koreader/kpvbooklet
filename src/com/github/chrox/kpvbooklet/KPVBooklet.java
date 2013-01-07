@@ -8,10 +8,7 @@ import java.util.Date;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 
-import com.amazon.ebook.util.log.d;
 import com.amazon.kindle.booklet.AbstractBooklet;
-import com.amazon.kindle.restricted.runtime.Framework;
-import com.amazon.kindle.restricted.content.catalog.ContentCatalog;
 
 /**
  * A Booklet for starting kpdfviewer. 
@@ -22,23 +19,25 @@ import com.amazon.kindle.restricted.content.catalog.ContentCatalog;
  */
 public class KPVBooklet extends AbstractBooklet {
 
-	private final d logger = d.CBb("KPVBooklet");
+	//private static final PrintStream log = Log.INSTANCE;
 	private final String kpdfviewer = "/mnt/us/kindlepdfviewer/kpdf.sh";
 	
 	private Process kpdfviewerProcess;
+	private CCAdapter request = CCAdapter.INSTANCE;
+	private static final PrintStream logger = Log.INSTANCE;
 	
 	public KPVBooklet() {
-		logger.hmA("KPVBooklet");
+		log("KPVBooklet");
 	}
 	
 	public void start(URI contentURI) {
 		String path = contentURI.getPath();
-		logger.hmA("Opening " + path + " with kindlepdfviewer...");
+		log("Opening " + path + " with kindlepdfviewer...");
 		String[] cmd = new String[] {kpdfviewer, path};
 		try {
 			kpdfviewerProcess = Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
-			logger.xIb(e.toString(), e);
+			log("E: " + e.toString());
 		}
 		
 		Thread thread = new kpdfviewerWaitThread(path);
@@ -46,13 +45,13 @@ public class KPVBooklet extends AbstractBooklet {
 	}
 
 	public void stop() {
-		logger.hmA("stop()");
+		log("stop()");
 		// Stop kpdfviewer
 		if (kpdfviewerProcess != null) {
 			try {
 				killQuitProcess(kpdfviewerProcess);
 			} catch (Exception e) {
-				logger.xIb(e.toString(), e);
+				log("E: " + e.toString());
 			}
 		}
 		super.stop();
@@ -91,15 +90,15 @@ public class KPVBooklet extends AbstractBooklet {
 				// wait for kpdfviewer to finish
 				kpdfviewerProcess.waitFor();
 			} catch (InterruptedException e) {
-				logger.xIb(e.toString(), e);
+				log("E: " + e.toString());
 			}
 			// update content catlog after kpdfviewer exits
-			updateCC(content_path, extractLastPercent(content_path));
+			updateCC(content_path, extractPercentFinished(content_path));
 			// sent go home lipc event after kpdfviewer exits
 			try {
 				Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd start app://com.lab126.booklet.home");
 			} catch (IOException e) {
-				logger.xIb(e.toString(), e);
+				log("E: " + e.toString());
 			}
 		}
 	}
@@ -114,57 +113,49 @@ public class KPVBooklet extends AbstractBooklet {
 		String tag = (dot == -1) ? "" : path.substring(dot+1).toUpperCase();
 		path = JSONObject.escape(path);
 		String json_query = "{\"filter\":{\"Equals\":{\"value\":\"" + path + "\",\"path\":\"location\"}},\"type\":\"QueryRequest\",\"maxResults\":1,\"sortOrder\":[{\"order\":\"descending\",\"path\":\"lastAccess\"},{\"order\":\"ascending\",\"path\":\"titles[0].collation\"}],\"startIndex\":0,\"id\":1,\"resultType\":\"fast\"}";
-		JSONObject json = CCRequest("query", json_query);
+		JSONObject json = request.perform("query", json_query);
 		JSONArray values = (JSONArray) json.get("values");
 		JSONObject value =(JSONObject) values.get(0);
 		String uuid = (String) value.get("uuid");
 		String json_change = "{\"commands\":[{\"update\":{\"uuid\":\"" + uuid + "\",\"lastAccess\":" + lastAccess + ",\"percentFinished\":" + percentFinished + ",\"displayTags\":[\"" + tag + "\"]" + "}}],\"type\":\"ChangeRequest\",\"id\":1}";
-		CCRequest("change", json_change);
-		logger.hmA("UpdateCC:file:" + path + ",lastAccess:" + lastAccess + ",percentFinished:" + percentFinished);
+		request.perform("change", json_change);
+		log("I: UpdateCC:file:" + path + ",lastAccess:" + lastAccess + ",percentFinished:" + percentFinished);
 	}
 	
 	/**
 	 * Extract last_percent in document history file
 	 * @param file path
 	 */
-	private float extractLastPercent(String path) {
-		float last_percent = 0.0f;
+	private float extractPercentFinished(String path) {
+		float percent_finished = 0.0f;
 		String history_dir = "/mnt/us/kindlepdfviewer/history/";
 		int slash = path.lastIndexOf('/');
 		String parentname = (slash == -1) ? "" : path.substring(0, slash+1);
 		String basename = (slash == -1) ? "" : path.substring(slash+1);
 		String histroypath = history_dir + "[" + parentname.replace('/','#') + "] " + basename + ".lua";
-		logger.hmA("found history file: " + histroypath);
+		log("I: found history file: " + histroypath);
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(histroypath)));
 			String line;
 			while ((line = br.readLine()) != null) {
-				if (line.indexOf("[\"last_percent\"]") > -1) {
-					logger.hmA("found last_percent line: " + line);
+				if (line.indexOf("[\"percent_finished\"]") > -1) {
+					log("I: found percent_finished line: " + line);
 					int equal = line.lastIndexOf('=');
 					int comma = line.lastIndexOf(',');
 					if (equal != -1 && comma != -1) {
 						String value = line.substring(equal+1, comma).trim();
-						last_percent = Float.parseFloat(value) * 100;
+						percent_finished = Float.parseFloat(value) * 100;
 					}
 				}
 		    }
 		    br.close();
 		} catch (IOException e) {
-			logger.xIb(e.toString(), e); 
+			log("E: " + e.toString());
 		}
-		return last_percent;
+		return percent_finished;
 	}
 	
-	/**
-	 * Perform CC request of type "query" and "change"
-	 * @param req_type request type of "query" or "change"
-	 * @param req_json request json string
-	 * @return return json object
-	 */
-	private JSONObject CCRequest(String req_type, String req_json) {
-		ContentCatalog CC = (ContentCatalog)Framework.getService(ContentCatalog.class);
-		JSONObject json = CC.eL(req_type, req_json, 200, 5);
-		return json;
+	private void log(String msg) {
+		logger.println(msg);
 	}
 }

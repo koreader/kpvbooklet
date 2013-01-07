@@ -21,14 +21,11 @@ fail()
 progress 10 "Mounting r/w"
 mntroot rw || fail "Unable to mount r/w"
 
-progress 20 "Restoring appreg.db"
-cp -f /var/local/appreg.db.bak /var/local/appreg.db || fail "Unable to restore appreg.db"
-
-progress 30 "Deleting restored appreg.db"
-rm /var/local/appreg.db.bak || fail "Unable to delete appreg.db.bak"
+progress 30 "Restoring appreg.db"
+[ -f /var/local/appreg.db.bak ] && mv -f /var/local/appreg.db.bak /var/local/appreg.db || fail "Unable to restore appreg.db"
 
 progress 50 "Deleting KPVBooklet.jar"
-rm /opt/amazon/ebook/booklet/KPVBooklet.jar || fail "Unable to delete KPVBooklet.jar"
+[ -f /opt/amazon/ebook/booklet/KPVBooklet.jar ] && rm /opt/amazon/ebook/booklet/KPVBooklet.jar || fail "Unable to delete KPVBooklet.jar"
 
 progress 80 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
