@@ -1,0 +1,12 @@
+2013-01-07 23:13  chrox
+
+	* add extractors for Kindle Touch
+
+2013-01-07 17:16  chrox
+
+	* build update for Kindle Touch 5.1.2
+
+2013-01-07 00:02  chrox
+
+	* build update for Kindle Paperwhite 5.3.1
+

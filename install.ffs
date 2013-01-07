@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 OTA=com.lab126.blanket.ota
 
 progress()
@@ -27,11 +27,25 @@ mntroot rw || fail "Unable to mount r/w"
 progress 20 "Installing KPVBooklet.jar"
 cp KPVBooklet.jar /opt/amazon/ebook/booklet/ || fail "Unable to copy KPVBooklet.jar"
 
-progress 40 "Backuping appreg.db"
-[ ! -f /var/local/appreg.db.bak ] && cp /var/local/appreg.db /var/local/appreg.db.bak
+if [ "$VERSION" == "5.1.2" ]; then
+	progress 40 "Installing new extractors"
+	export IFS=";"
+	dest_exts="djvu;epub;cbz;chm;doc;fb2;htm;html;pdb;rtf;tcr;xps;zip"
+	txt_dir="/etc/kdb/system/daemon/scanner/extractors/7"
+	dest_dir="/etc/kdb/system/daemon/scanner/extractors/"
+	i=20
+	for ext in $dest_exts; do
+		cp -r $txt_dir "$dest_dir$i"
+		sed -i "s/txt/$ext/g" "$dest_dir$i/glob"
+		i=`expr $i + 1`
+	done
+else
+	progress 40 "Backuping appreg.db"
+	[ ! -f /var/local/appreg.db.bak ] && cp /var/local/appreg.db /var/local/appreg.db.bak
 
-progress 60 "Updating appreg.db"
-sqlite3 /var/local/appreg.db < mimes.sql
+	progress 60 "Updating appreg.db"
+	sqlite3 /var/local/appreg.db < mimes.sql
+fi
 
 progress 80 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
