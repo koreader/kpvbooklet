@@ -1,4 +1,4 @@
-KPVBooklet for Kindle Paperwhite
+KPVBooklet for Kindle Touch and Kindle Paperwhite
 ======================================
 
 KPVBooklet is a Kindle booklet for starting kindlepdfviewer
