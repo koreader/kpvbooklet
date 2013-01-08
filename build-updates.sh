@@ -37,5 +37,5 @@ kindletool create ota2 -d k5w -d k5g -d k5gb -d pw -d pwg -d pwgb -C build/insta
 # Uninstall
 kindletool create ota2 -d k5w -d k5g -d k5gb -d pw -d pwg -d pwgb -C build/uninstall update_${PKGNAME}_${PKGVER}_uninstall.bin
 
-zip kindle-kpvbooklet-${PKGVER} *.bin README_FIRST.txt ChangeLog.txt
+zip kindle-kpvbooklet-${PKGVER}.zip *.bin README_FIRST.txt ChangeLog.txt
 

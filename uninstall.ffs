@@ -24,11 +24,11 @@ VERSION=`cut -d ' ' -f 2 /etc/prettyversion.txt`
 progress 10 "Mounting r/w"
 mntroot rw || fail "Unable to mount r/w"
 
-progress 30 "Removing KPVBooklet.jar"
+progress 20 "Removing KPVBooklet.jar"
 [ -f /opt/amazon/ebook/booklet/KPVBooklet.jar ] && rm /opt/amazon/ebook/booklet/KPVBooklet.jar || fail "Unable to delete KPVBooklet.jar"
 
 if [ "$VERSION" == "5.1.2" ]; then
-	progress 50 "Removing extractors"
+	progress 30 "Removing extractors"
 	dest_dir="/etc/kdb/system/daemon/scanner/extractors/"
 	cd $dest_dir
 	for dir in *; do
@@ -36,11 +36,10 @@ if [ "$VERSION" == "5.1.2" ]; then
 			rm -rf $dir
 		fi
 	done
-
-else
-	progress 50 "Restoring appreg.db"
-	[ -f /var/local/appreg.db.bak ] && mv -f /var/local/appreg.db.bak /var/local/appreg.db || fail "Unable to restore appreg.db"
 fi
+
+progress 50 "Restoring appreg.db"
+[ -f /var/local/appreg.db.bak ] && mv -f /var/local/appreg.db.bak /var/local/appreg.db || fail "Unable to restore appreg.db"
 
 progress 80 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
