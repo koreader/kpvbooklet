@@ -27,12 +27,13 @@ public class KPVBooklet extends AbstractBooklet {
 	private static final PrintStream logger = Log.INSTANCE;
 	
 	public KPVBooklet() {
-		log("KPVBooklet");
+		log("I: KPVBooklet");
 	}
 	
 	public void start(URI contentURI) {
+		log("I: start()");
 		String path = contentURI.getPath();
-		log("Opening " + path + " with kindlepdfviewer...");
+		log("I: Opening " + path + " with kindlepdfviewer...");
 		String[] cmd = new String[] {kpdfviewer, path};
 		try {
 			kpdfviewerProcess = Runtime.getRuntime().exec(cmd);
@@ -45,16 +46,16 @@ public class KPVBooklet extends AbstractBooklet {
 	}
 
 	public void stop() {
-		log("stop()");
+		log("I: stop()");
 		// Stop kpdfviewer
 		if (kpdfviewerProcess != null) {
 			try {
 				killQuitProcess(kpdfviewerProcess);
+				log("I: kpdf.sh process killed with return value " + kpdfviewerProcess.exitValue());
 			} catch (Exception e) {
 				log("E: " + e.toString());
 			}
 		}
-		super.stop();
 	}
 	
 	/** 
