@@ -1,3 +1,7 @@
+2013-01-08 10:27  chrox
+
+	* bugfix booklet handler for Kindle Touch
+
 2013-01-07 23:13  chrox
 
 	* add extractors for Kindle Touch

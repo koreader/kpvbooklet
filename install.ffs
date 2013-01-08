@@ -35,7 +35,7 @@ if [ "$VERSION" == "5.1.2" ]; then
 	dest_dir="/etc/kdb/system/daemon/scanner/extractors/"
 	i=20
 	for ext in $dest_exts; do
-		cp -r $txt_dir "$dest_dir$i"
+		cp -rfT $txt_dir "$dest_dir$i"
 		sed -i "s/txt/$ext/g" "$dest_dir$i/glob"
 		i=`expr $i + 1`
 	done
