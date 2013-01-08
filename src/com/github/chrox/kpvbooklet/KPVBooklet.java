@@ -92,8 +92,17 @@ public class KPVBooklet extends AbstractBooklet {
 			} catch (InterruptedException e) {
 				log("E: " + e.toString());
 			}
+			
 			// update content catlog after kpdfviewer exits
 			updateCC(content_path, extractPercentFinished(content_path));
+			
+			// kill all kpdfviewer process
+			try {
+				Runtime.getRuntime().exec("killall reader.lua");
+			} catch (IOException e) {
+				log("E: " + e.toString());
+			}
+			
 			// sent go home lipc event after kpdfviewer exits
 			try {
 				Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd start app://com.lab126.booklet.home");
