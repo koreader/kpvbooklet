@@ -39,3 +39,5 @@ kindletool create ota2 -d k5w -d k5g -d k5gb -d pw -d pwg -d pwgb -C build/unins
 
 zip kindle-kpvbooklet-${PKGVER}.zip *.bin README_FIRST.txt ChangeLog.txt
 
+rm *.bin
+
