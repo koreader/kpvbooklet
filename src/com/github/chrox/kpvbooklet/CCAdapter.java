@@ -1,6 +1,6 @@
 package com.github.chrox.kpvbooklet;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import org.json.simple.JSONObject;
 
 import com.amazon.kindle.restricted.content.catalog.ContentCatalog;
@@ -10,21 +10,7 @@ public abstract class CCAdapter {
 	public static final CCAdapter INSTANCE = getAdapterInstance();
 
 	private static CCAdapter getAdapterInstance() {
-		String className = "com.github.chrox.kpvbooklet.CCRequest531";
-		//String className = "com.github.chrox.kpvbooklet.CCRequest512";
-		try {
-			// this class exists in FW 5.3.1, but not in FW 5.2.0.
-			Class.forName("com.amazon.ebook.util.text.P");
-		} catch (Throwable t) {
-			className = "com.github.chrox.kpvbooklet.CCRequest520";
-		}
-		try {
-			// this class exists in FW 5.1.2, but thanks to obfuscation, not in
-			// PW firmwares.
-			Class.forName("com.amazon.ebook.util.text.LanguageTag");
-			className = "com.github.chrox.kpvbooklet.CCRequest512";
-		} catch (Throwable t) {}
-		
+		String className = "com.github.chrox.kpvbooklet.CCRequest";
 		try {
 			Class clazz = Class.forName(className);
 			return (CCAdapter) clazz.newInstance();
@@ -43,9 +29,35 @@ public abstract class CCAdapter {
 	public JSONObject perform(String req_type, String req_json) {
 		ContentCatalog CC = (ContentCatalog)Framework.getService(ContentCatalog.class);
 		try {
-			Method perform = ContentCatalog.class.getDeclaredMethod(INSTANCE.getPerformName(), new Class[] {String.class, String.class, int.class, int.class});
-			JSONObject json = (JSONObject) perform.invoke(CC, new Object[] { req_type, req_json, new Integer(200), new Integer(5)});
-			return json;
+			
+			Method perform = null;
+			
+			// decompilation approach
+			//Method perform = ContentCatalog.class.getDeclaredMethod(INSTANCE.getPerformName(), new Class[] {String.class, String.class, int.class, int.class});
+			
+			// enumeration approach 
+			Class[] signature = {String.class, String.class, int.class, int.class};
+			Method[] methods = ContentCatalog.class.getDeclaredMethods();
+			for (int i = 0; i < methods.length; i++) {
+				Class[] params = methods[i].getParameterTypes();
+				if ( params.length == signature.length ) {
+					int j;
+				    for (j = 0; j < signature.length && params[j].isAssignableFrom( signature[j] ); j++ ) {}
+				    if ( j == signature.length ) {
+				    	perform = methods[i];
+				    	break;
+				    }
+				}
+			}
+			
+			if (perform != null) {
+				JSONObject json = (JSONObject) perform.invoke(CC, new Object[] { req_type, req_json, new Integer(200), new Integer(5)});
+				return json;
+			}
+			else {
+				return new JSONObject();
+			}
+			
 		} catch (Throwable t) {
 			throw new RuntimeException(t.toString());
 		}

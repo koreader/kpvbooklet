@@ -1,3 +1,7 @@
+2013-01-09 19:25  chrox
+
+	* use enumeration approach to find request method
+
 2013-01-08 10:27  chrox
 
 	* bugfix booklet handler for Kindle Touch
