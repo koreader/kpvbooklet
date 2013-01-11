@@ -19,6 +19,9 @@
     <path id="local.classpath">
 		<pathelement location="${env.KINDLE_EBOOK}/lib/json_simple-1.1.jar"/>
         <pathelement location="${env.KINDLE_EBOOK}/lib/kaf.jar"/>
+    	<pathelement location="${env.KINDLE_EBOOK}/lib/ReaderSDK.jar"/>
+    	<pathelement location="${env.KINDLE_EBOOK}/booklet/Reader.jar"/>
+    	<pathelement location="${env.KINDLE_EBOOK}/booklet/AbstractReaderBooklet.jar"/>
     </path>
 
     <target name="compile" depends="checkProperties">

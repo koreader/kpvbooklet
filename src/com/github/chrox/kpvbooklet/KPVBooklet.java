@@ -1,14 +1,14 @@
 package com.github.chrox.kpvbooklet;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Date;
+import java.lang.reflect.Field;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 
-import com.amazon.kindle.booklet.AbstractBooklet;
+import com.amazon.ebook.booklet.reader.ReaderBooklet;
 
 /**
  * A Booklet for starting kpdfviewer. 
@@ -17,9 +17,8 @@ import com.amazon.kindle.booklet.AbstractBooklet;
  * 
  * @author Patric Mueller &lt;bhaak@gmx.net&gt;
  */
-public class KPVBooklet extends AbstractBooklet {
+public class KPVBooklet extends ReaderBooklet {
 
-	//private static final PrintStream log = Log.INSTANCE;
 	private final String kpdfviewer = "/mnt/us/kindlepdfviewer/kpdf.sh";
 	
 	private Process kpdfviewerProcess;
@@ -32,7 +31,17 @@ public class KPVBooklet extends AbstractBooklet {
 	
 	public void start(URI contentURI) {
 		log("I: start()");
+		log("I: contentURI " + contentURI.toString());
 		String path = contentURI.getPath();
+		int dot = path.lastIndexOf('.');
+		String ext = (dot == -1) ? "" : path.substring(dot+1).toLowerCase();
+		if (ext.equals("pdf")) {
+			if ( contentURI.getQuery() != null ) {
+				log("I: Opening " + path + " with native reader...");
+				super.start(contentURI);
+				return;
+			}
+		}
 		log("I: Opening " + path + " with kindlepdfviewer...");
 		String[] cmd = new String[] {kpdfviewer, path};
 		try {
@@ -56,6 +65,7 @@ public class KPVBooklet extends AbstractBooklet {
 				log("E: " + e.toString());
 			}
 		}
+		super.stop();
 	}
 	
 	/** 

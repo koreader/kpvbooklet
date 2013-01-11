@@ -1,3 +1,7 @@
+2013-01-11 21:43  chrox
+
+	* add a backdoor to native PDF reader
+	
 2013-01-09 19:25  chrox
 
 	* use enumeration approach to find request method
