@@ -12,6 +12,8 @@ INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','extend-start','
 INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','searchbar-mode','transient');
 INSERT INTO "properties" VALUES('com.lab126.booklet.kpvbooklet','supportedOrientation','URL');
 
+INSERT INTO "associations" VALUES('com.lab126.booklet.kpvbooklet','detail','MT:application/octet-stream','true');
+
 INSERT INTO "associations" VALUES('com.lab126.booklet.kpvbooklet','application','MT:application/pdf','true');
 
 INSERT INTO "mimetypes" VALUES('djvu','MT:image/x.djvu');
