@@ -1,16 +1,22 @@
-package com.github.chrox.kpvbooklet;
+package com.github.chrox.kpvbooklet.ccadapter;
 
+import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.util.Date;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.amazon.kindle.restricted.content.catalog.ContentCatalog;
 import com.amazon.kindle.restricted.runtime.Framework;
+import com.github.chrox.kpvbooklet.util.Log;
 
 public abstract class CCAdapter {
 	public static final CCAdapter INSTANCE = getAdapterInstance();
+	private static final PrintStream logger = Log.INSTANCE;
 
 	private static CCAdapter getAdapterInstance() {
-		String className = "com.github.chrox.kpvbooklet.CCRequest";
+		String className = "com.github.chrox.kpvbooklet.ccadapter.CCRequest";
 		try {
 			Class clazz = Class.forName(className);
 			return (CCAdapter) clazz.newInstance();
@@ -61,6 +67,29 @@ public abstract class CCAdapter {
 		} catch (Throwable t) {
 			throw new RuntimeException(t.toString());
 		}
+	}
+	
+	/**
+	 * Update lastAccess and displayTag fields in ContentCatlog
+	 * @param file path
+	 */
+	public void updateCC(String path, float percentFinished) {
+		long lastAccess = new Date().getTime() / 1000L;
+		int dot = path.lastIndexOf('.');
+		String tag = (dot == -1) ? "" : path.substring(dot+1).toUpperCase();
+		path = JSONObject.escape(path);
+		String json_query = "{\"filter\":{\"Equals\":{\"value\":\"" + path + "\",\"path\":\"location\"}},\"type\":\"QueryRequest\",\"maxResults\":1,\"sortOrder\":[{\"order\":\"descending\",\"path\":\"lastAccess\"},{\"order\":\"ascending\",\"path\":\"titles[0].collation\"}],\"startIndex\":0,\"id\":1,\"resultType\":\"fast\"}";
+		JSONObject json = perform("query", json_query);
+		JSONArray values = (JSONArray) json.get("values");
+		JSONObject value =(JSONObject) values.get(0);
+		String uuid = (String) value.get("uuid");
+		String json_change = "{\"commands\":[{\"update\":{\"uuid\":\"" + uuid + "\",\"lastAccess\":" + lastAccess + ",\"percentFinished\":" + percentFinished + ",\"displayTags\":[\"" + tag + "\"]" + "}}],\"type\":\"ChangeRequest\",\"id\":1}";
+		perform("change", json_change);
+		log("I: UpdateCC:file:" + path + ",lastAccess:" + lastAccess + ",percentFinished:" + percentFinished);
+	}
+	
+	private void log(String msg) {
+		logger.println(msg);
 	}
 	
 	public abstract String getPerformName();

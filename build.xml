@@ -20,6 +20,7 @@
 		<pathelement location="${env.KINDLE_EBOOK}/lib/json_simple-1.1.jar"/>
         <pathelement location="${env.KINDLE_EBOOK}/lib/kaf.jar"/>
     	<pathelement location="${env.KINDLE_EBOOK}/lib/ReaderSDK.jar"/>
+    	<pathelement location="${env.KINDLE_EBOOK}/lib/ReaderContentSDK.jar"/>
     	<pathelement location="${env.KINDLE_EBOOK}/booklet/Reader.jar"/>
     	<pathelement location="${env.KINDLE_EBOOK}/booklet/AbstractReaderBooklet.jar"/>
     </path>
@@ -55,13 +56,13 @@
 	
 	<target name="dev" depends="jar">
 		<exec executable="ssh">
-			<arg line="root@kindle 'mntroot rw &amp;'"/>
+			<arg line="root@kindle '/usr/sbin/mntroot rw'"/>
 		</exec>
 		<exec executable="scp">
 			<arg line="build/jar/${ant.project.name}.jar root@kindle:/opt/amazon/ebook/booklet/${ant.project.name}.jar"/>
 		</exec>
 		<exec executable="ssh">
-			<arg line="root@kindle 'mntroot ro &amp;'"/>
+			<arg line="root@kindle '/usr/sbin/mntroot ro'"/>
 		</exec>
 	</target>
 	

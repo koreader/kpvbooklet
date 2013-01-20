@@ -1,4 +1,4 @@
-package com.github.chrox.kpvbooklet;
+package com.github.chrox.kpvbooklet.util;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

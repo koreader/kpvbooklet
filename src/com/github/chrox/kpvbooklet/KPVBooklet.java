@@ -2,13 +2,13 @@ package com.github.chrox.kpvbooklet;
 
 import java.io.*;
 import java.net.URI;
-import java.util.Date;
 import java.lang.reflect.Field;
 
-import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
-
 import com.amazon.ebook.booklet.reader.ReaderBooklet;
+
+import com.github.chrox.kpvbooklet.ccadapter.CCAdapter;
+import com.github.chrox.kpvbooklet.dictadapter.DictAdapter;
+import com.github.chrox.kpvbooklet.util.Log;
 
 /**
  * A Booklet for starting kpdfviewer. 
@@ -22,7 +22,7 @@ public class KPVBooklet extends ReaderBooklet {
 	private final String kpdfviewer = "/mnt/us/kindlepdfviewer/kpdf.sh";
 	
 	private Process kpdfviewerProcess;
-	private CCAdapter request = CCAdapter.INSTANCE;
+	private CCAdapter ccrequest = CCAdapter.INSTANCE;
 	private static final PrintStream logger = Log.INSTANCE;
 	
 	public KPVBooklet() {
@@ -30,6 +30,13 @@ public class KPVBooklet extends ReaderBooklet {
 	}
 	
 	public void start(URI contentURI) {
+		try {
+			DictAdapter dictionary = DictAdapter.INSTANCE;
+			log("T: test dict query: " + dictionary.query("dictionary"));
+		} catch (Exception e) {
+			log("E: " + e.toString());
+		}
+		
 		log("I: start()");
 		log("I: contentURI " + contentURI.toString());
 		String path = contentURI.getPath();
@@ -105,7 +112,7 @@ public class KPVBooklet extends ReaderBooklet {
 			}
 			
 			// update content catlog after kpdfviewer exits
-			updateCC(content_path, extractPercentFinished(content_path));
+			ccrequest.updateCC(content_path, extractPercentFinished(content_path));
 			
 			// sent go home lipc event after kpdfviewer exits
 			try {
@@ -114,25 +121,6 @@ public class KPVBooklet extends ReaderBooklet {
 				log("E: " + e.toString());
 			}
 		}
-	}
-	
-	/**
-	 * Update lastAccess and displayTag fields in ContentCatlog
-	 * @param file path
-	 */
-	private void updateCC(String path, float percentFinished) {
-		long lastAccess = new Date().getTime() / 1000L;
-		int dot = path.lastIndexOf('.');
-		String tag = (dot == -1) ? "" : path.substring(dot+1).toUpperCase();
-		path = JSONObject.escape(path);
-		String json_query = "{\"filter\":{\"Equals\":{\"value\":\"" + path + "\",\"path\":\"location\"}},\"type\":\"QueryRequest\",\"maxResults\":1,\"sortOrder\":[{\"order\":\"descending\",\"path\":\"lastAccess\"},{\"order\":\"ascending\",\"path\":\"titles[0].collation\"}],\"startIndex\":0,\"id\":1,\"resultType\":\"fast\"}";
-		JSONObject json = request.perform("query", json_query);
-		JSONArray values = (JSONArray) json.get("values");
-		JSONObject value =(JSONObject) values.get(0);
-		String uuid = (String) value.get("uuid");
-		String json_change = "{\"commands\":[{\"update\":{\"uuid\":\"" + uuid + "\",\"lastAccess\":" + lastAccess + ",\"percentFinished\":" + percentFinished + ",\"displayTags\":[\"" + tag + "\"]" + "}}],\"type\":\"ChangeRequest\",\"id\":1}";
-		request.perform("change", json_change);
-		log("I: UpdateCC:file:" + path + ",lastAccess:" + lastAccess + ",percentFinished:" + percentFinished);
 	}
 	
 	/**

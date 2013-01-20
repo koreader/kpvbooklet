@@ -1,4 +1,4 @@
-package com.github.chrox.kpvbooklet;
+package com.github.chrox.kpvbooklet.ccadapter;
 
 public class CCRequest extends CCAdapter{
 	
