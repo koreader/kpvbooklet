@@ -52,18 +52,6 @@ INSERT INTO "properties" VALUES('archive.displaytags.mimetypes','application/fb2
 INSERT INTO "associations" VALUES('com.lab126.generic.extractor','extractor','GL:*.fb2','true');
 INSERT INTO "associations" VALUES('com.lab126.booklet.kpvbooklet','application','MT:application/fb2','true');
 
-INSERT INTO "mimetypes" VALUES('htm','MT:text/htm');
-INSERT INTO "extenstions" VALUES('htm','MT:text/htm');
-INSERT INTO "properties" VALUES('archive.displaytags.mimetypes','text/htm','HTML');
-INSERT INTO "associations" VALUES('com.lab126.generic.extractor','extractor','GL:*.htm','true');
-INSERT INTO "associations" VALUES('com.lab126.booklet.kpvbooklet','application','MT:text/htm','true');
-
-INSERT INTO "mimetypes" VALUES('html','MT:text/html');
-INSERT INTO "extenstions" VALUES('html','MT:text/html');
-INSERT INTO "properties" VALUES('archive.displaytags.mimetypes','text/html','HTML');
-INSERT INTO "associations" VALUES('com.lab126.generic.extractor','extractor','GL:*.html','true');
-INSERT INTO "associations" VALUES('com.lab126.booklet.kpvbooklet','application','MT:text/html','true');
-
 INSERT INTO "mimetypes" VALUES('pdb','MT:application/pdb');
 INSERT INTO "extenstions" VALUES('pdb','MT:application/pdb');
 INSERT INTO "properties" VALUES('archive.displaytags.mimetypes','application/pdb','PDB');
@@ -81,12 +69,6 @@ INSERT INTO "extenstions" VALUES('tcr','MT:application/tcr');
 INSERT INTO "properties" VALUES('archive.displaytags.mimetypes','application/tcr','TCR');
 INSERT INTO "associations" VALUES('com.lab126.generic.extractor','extractor','GL:*.tcr','true');
 INSERT INTO "associations" VALUES('com.lab126.booklet.kpvbooklet','application','MT:application/tcr','true');
-
-INSERT INTO "mimetypes" VALUES('txt','MT:text/plain');
-INSERT INTO "extenstions" VALUES('txt','MT:text/plain');
-INSERT INTO "properties" VALUES('archive.displaytags.mimetypes','text/plain','TXT');
-INSERT INTO "associations" VALUES('com.lab126.generic.extractor','extractor','GL:*.txt','true');
-INSERT INTO "associations" VALUES('com.lab126.booklet.kpvbooklet','application','MT:text/plain','true');
 
 INSERT INTO "mimetypes" VALUES('xps','MT:application/xps');
 INSERT INTO "extenstions" VALUES('xps','MT:application/xps');

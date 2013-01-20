@@ -1,3 +1,7 @@
+2013-01-21 00:11  chrox
+
+	* open txt and html documents with native reader
+	
 2013-01-20 23:12  chrox
 
 	* add dictionary backend
