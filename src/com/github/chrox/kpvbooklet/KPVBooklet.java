@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import com.amazon.ebook.booklet.reader.ReaderBooklet;
 
 import com.github.chrox.kpvbooklet.ccadapter.CCAdapter;
-import com.github.chrox.kpvbooklet.dictadapter.DictAdapter;
 import com.github.chrox.kpvbooklet.util.Log;
 
 /**
@@ -27,15 +26,16 @@ public class KPVBooklet extends ReaderBooklet {
 	
 	public KPVBooklet() {
 		log("I: KPVBooklet");
+		DictBackend.addDictBackend();
 	}
 	
 	public void start(URI contentURI) {
-		try {
-			DictAdapter dictionary = DictAdapter.INSTANCE;
-			log("T: test dict query: " + dictionary.query("dictionary"));
-		} catch (Exception e) {
-			log("E: " + e.toString());
-		}
+//		try {
+//			DictAdapter dictionary = DictAdapter.INSTANCE;
+//			log("T: test dict query: " + dictionary.query("dictionary"));
+//		} catch (Exception e) {
+//			log("E: " + e.toString());
+//		}
 		
 		log("I: start()");
 		log("I: contentURI " + contentURI.toString());
