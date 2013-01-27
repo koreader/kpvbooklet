@@ -1,3 +1,7 @@
+2013-01-27 18:27  chrox
+
+	* add support for Japanese and Canadian 3G PaperWhite 
+
 2013-01-21 17:53  chrox
 
 	* add a lipc interface on dictionary backend

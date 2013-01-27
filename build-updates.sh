@@ -2,7 +2,7 @@
 
 HACKNAME="kpvbooklet"
 PKGNAME="${HACKNAME}"
-PKGVER="0.4.2"
+PKGVER="0.4.2a"
 
 # We need kindletool (https://github.com/NiLuJe/KindleTool) in $PATH
 if (( $(kindletool version | wc -l) == 1 )) ; then
@@ -33,9 +33,9 @@ cp -f uninstall.ffs build/uninstall/uninstall.ffs
 
 ## K5
 # Install
-kindletool create ota2 -d k5w -d k5g -d k5gb -d pw -d pwg -d pwgb -C build/install update_${PKGNAME}_${PKGVER}_install.bin
+kindletool create ota2 -d kindle5 -C build/install update_${PKGNAME}_${PKGVER}_install.bin
 # Uninstall
-kindletool create ota2 -d k5w -d k5g -d k5gb -d pw -d pwg -d pwgb -C build/uninstall update_${PKGNAME}_${PKGVER}_uninstall.bin
+kindletool create ota2 -d kindle5 -C build/uninstall update_${PKGNAME}_${PKGVER}_uninstall.bin
 
 zip kindle-kpvbooklet-${PKGVER}.zip *.bin README_FIRST.txt ChangeLog.txt
 
