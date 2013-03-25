@@ -10,7 +10,7 @@ import com.github.chrox.kpvbooklet.ccadapter.CCAdapter;
 import com.github.chrox.kpvbooklet.util.Log;
 
 /**
- * A Booklet for starting kpdfviewer. 
+ * A booklet for launching koreader directly from Kindle home screen.
  * 
  * Modified by chrox@github.
  * 
@@ -18,9 +18,13 @@ import com.github.chrox.kpvbooklet.util.Log;
  */
 public class KPVBooklet extends ReaderBooklet {
 
-	private final String kpdfviewer = "/mnt/us/kindlepdfviewer/kpdf.sh";
+	private final String koreader = "/mnt/us/koreader/koreader.sh";
+	private final String kor_history = "/mnt/us/koreader/history/";
+	private final String kpdfview = "/mnt/us/kindlepdfviewer/kpdf.sh";
+	private final String kpv_history = "/mnt/us/kindlepdfviewer/history/";
 	
-	private Process kpdfviewerProcess;
+	private Process readerProcess;
+	private String history_dir;
 	private CCAdapter ccrequest = CCAdapter.INSTANCE;
 	private static final PrintStream logger = Log.INSTANCE;
 	
@@ -29,14 +33,7 @@ public class KPVBooklet extends ReaderBooklet {
 		DictBackend.addDictBackend();
 	}
 	
-	public void start(URI contentURI) {
-//		try {
-//			DictAdapter dictionary = DictAdapter.INSTANCE;
-//			log("T: test dict query: " + dictionary.query("dictionary"));
-//		} catch (Exception e) {
-//			log("E: " + e.toString());
-//		}
-		
+	public void start(URI contentURI) {	
 		log("I: start()");
 		log("I: contentURI " + contentURI.toString());
 		String path = contentURI.getPath();
@@ -49,25 +46,37 @@ public class KPVBooklet extends ReaderBooklet {
 				return;
 			}
 		}
-		log("I: Opening " + path + " with kindlepdfviewer...");
-		String[] cmd = new String[] {kpdfviewer, path};
+		log("I: Opening " + path + " with koreader...");
+		String[] cmd = new String[] {koreader, path};
 		try {
-			kpdfviewerProcess = Runtime.getRuntime().exec(cmd);
+			readerProcess = Runtime.getRuntime().exec(cmd);
+			history_dir = kor_history;
 		} catch (IOException e) {
-			log("E: " + e.toString());
+			readerProcess = null;
+			log("W: koreader not found, will check legacy kindlepdfviewer instead.");
+		}
+		// fallback to kpdf.sh if we cannot exec koreader.sh
+		if (readerProcess == null) {
+			log("I: Opening " + path + " with kindlepdfviewer...");
+			cmd[0] = kpdfview;
+			history_dir = kpv_history;
+			try {
+				readerProcess = Runtime.getRuntime().exec(cmd);
+			} catch (IOException e) {
+				log("E: " + e.toString());
+			}
 		}
 		
-		Thread thread = new kpdfviewerWaitThread(path);
+		Thread thread = new ReaderWaitThread(history_dir, path);
 		thread.start();
 	}
 
 	public void stop() {
 		log("I: stop()");
-		// Stop kpdfviewer
-		if (kpdfviewerProcess != null) {
+		if (readerProcess != null) {
 			try {
-				killQuitProcess(kpdfviewerProcess);
-				log("I: kpdf.sh process killed with return value " + kpdfviewerProcess.exitValue());
+				killQuitProcess(readerProcess);
+				log("I: reader process killed with return value " + readerProcess.exitValue());
 			} catch (Exception e) {
 				log("E: " + e.toString());
 			}
@@ -94,27 +103,28 @@ public class KPVBooklet extends ReaderBooklet {
 		}
 	}
 	
-	/** This thread waits for kpdfviewer to finish and then sends
-	 * a BACKWARD lipc event. 
+	/** This thread waits for reader process to finish and then update content catalog  
 	 */
-	class kpdfviewerWaitThread extends Thread {
+	class ReaderWaitThread extends Thread {
+		private String history_dir = "";
 		private String content_path = "";
 		
-		public kpdfviewerWaitThread(String path) {
+		public ReaderWaitThread(String dir, String path) {
+			history_dir = dir;
 			content_path = path;
 		}
 		public void run() {
 			try {
-				// wait for kpdfviewer to finish
-				kpdfviewerProcess.waitFor();
+				// wait for reader process to finish
+				readerProcess.waitFor();
 			} catch (InterruptedException e) {
 				log("E: " + e.toString());
 			}
 			
-			// update content catlog after kpdfviewer exits
-			ccrequest.updateCC(content_path, extractPercentFinished(content_path));
+			// update content catlog after reader exits
+			ccrequest.updateCC(content_path, extractPercentFinished(history_dir, content_path));
 			
-			// sent go home lipc event after kpdfviewer exits
+			// sent go home lipc event after reader exits
 			try {
 				Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd start app://com.lab126.booklet.home");
 			} catch (IOException e) {
@@ -127,9 +137,8 @@ public class KPVBooklet extends ReaderBooklet {
 	 * Extract last_percent in document history file
 	 * @param file path
 	 */
-	private float extractPercentFinished(String path) {
+	private float extractPercentFinished(String history_dir, String path) {
 		float percent_finished = 0.0f;
-		String history_dir = "/mnt/us/kindlepdfviewer/history/";
 		int slash = path.lastIndexOf('/');
 		String parentname = (slash == -1) ? "" : path.substring(0, slash+1);
 		String basename = (slash == -1) ? "" : path.substring(slash+1);
