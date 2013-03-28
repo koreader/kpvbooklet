@@ -1,6 +1,10 @@
+2013-03-20 18:27  chrox
+
+	* add support for KOReader
+
 2013-01-27 18:27  chrox
 
-	* add support for Japanese and Canadian 3G PaperWhite 
+	* add support for Japanese and Canadian 3G PaperWhite
 
 2013-01-21 17:53  chrox
 
@@ -9,7 +13,7 @@
 2013-01-21 00:11  chrox
 
 	* open txt and html documents with native reader
-	
+
 2013-01-20 23:12  chrox
 
 	* add dictionary backend
@@ -21,7 +25,7 @@
 2013-01-11 21:43  chrox
 
 	* add a backdoor to native PDF reader
-	
+
 2013-01-09 19:25  chrox
 
 	* use enumeration approach to find request method
