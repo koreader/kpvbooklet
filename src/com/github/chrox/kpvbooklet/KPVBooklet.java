@@ -121,8 +121,12 @@ public class KPVBooklet extends ReaderBooklet {
 				log("E: " + e.toString());
 			}
 			
-			// update content catlog after reader exits
-			ccrequest.updateCC(content_path, extractPercentFinished(history_dir, content_path));
+			try {
+				// update content catlog after reader exits
+				ccrequest.updateCC(content_path, extractPercentFinished(history_dir, content_path));
+			} catch (Exception e) {
+				log("E: " + e.toString());
+			}
 			
 			// sent go home lipc event after reader exits
 			try {
@@ -154,6 +158,8 @@ public class KPVBooklet extends ReaderBooklet {
 					int comma = line.lastIndexOf(',');
 					if (equal != -1 && comma != -1) {
 						String value = line.substring(equal+1, comma).trim();
+						// decimal separator of number is comma in some locales
+						value = value.replace(',', '.');
 						percent_finished = Float.parseFloat(value) * 100;
 					}
 				}

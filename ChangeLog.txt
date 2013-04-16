@@ -1,3 +1,7 @@
+2013-04-16 15:13  chrox
+
+	* bugfix parsing float string from certain locales
+
 2013-03-20 18:27  chrox
 
 	* add support for KOReader
