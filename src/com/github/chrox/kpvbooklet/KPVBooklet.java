@@ -69,6 +69,19 @@ public class KPVBooklet extends ReaderBooklet {
 		
 		Thread thread = new ReaderWaitThread(history_dir, path);
 		thread.start();
+		
+		// wait 3 seconds for pillow disable in koreader.sh
+		try {
+		    Thread.sleep(3000);
+		} catch(InterruptedException e) {
+			log("E: " + e.toString());
+		}
+		// enable pillow for activity indicator
+		try {
+			Runtime.getRuntime().exec("lipc-set-prop com.lab126.pillow disableEnablePillow enable");
+		} catch (IOException e) {
+			log("E: " + e.toString());
+		}
 	}
 
 	public void stop() {
