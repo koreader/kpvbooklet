@@ -1,3 +1,4 @@
+*.zip
 *.swp
 .settings
 .classpath
