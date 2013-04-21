@@ -1,3 +1,7 @@
+2013-04-21 15:47  chrox
+
+	* add dictionary backend for 5.3.4
+
 2013-04-16 15:13  chrox
 
 	* bugfix parsing float string from certain locales

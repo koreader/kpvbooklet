@@ -25,7 +25,9 @@ public abstract class DictAdapter {
 	private static DictAdapter getAdapterInstance() {
 		String version = KindleDevice.VERSION;
 		String className = "";
-		if ("5.3.3".equals(version)) {
+		if ("5.3.4".equals(version)) {
+			className = "com.github.chrox.kpvbooklet.dictadapter.DictQuery534";
+		} else if ("5.3.3".equals(version)) {
 			className = "com.github.chrox.kpvbooklet.dictadapter.DictQuery533";
 		} else if ("5.3.2".equals(version)) {
 			className = "com.github.chrox.kpvbooklet.dictadapter.DictQuery532";
@@ -140,10 +142,16 @@ public abstract class DictAdapter {
 	
 	private String getDictDefinition(Object result) {
 		try {
-			// usage found at com.amazon.ebook.booklet.reader.plugin.systemcards (grep with "DictionaryCard_do_lookup")
-			int index = ((Integer) ResultEntry.getField(getResultIndexField()).get(result)).intValue();
-			Object[] definitions = (Object[]) ResultEntry.getField(getResultsField()).get(result);
-			return (String) Definition.getField(getDefinitionField()).get(definitions[index]);
+			if (getResultsField().length() == 0) {
+				// usage found at com.amazon.ebook.booklet.reader.plugin.systemcards (grep with "DictionaryCard_getCard")
+				// new in 5.3.4
+				return (String) ResultEntry.getField(getDefinitionField()).get(result);
+			} else {
+				// usage found at com.amazon.ebook.booklet.reader.plugin.systemcards (grep with "DictionaryCard_do_lookup")
+				int index = ((Integer) ResultEntry.getField(getResultIndexField()).get(result)).intValue();
+				Object[] definitions = (Object[]) ResultEntry.getField(getResultsField()).get(result);
+				return (String) Definition.getField(getDefinitionField()).get(definitions[index]);
+			}
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
 			throw new RuntimeException(t.toString());
