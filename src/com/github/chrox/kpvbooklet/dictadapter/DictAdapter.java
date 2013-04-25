@@ -25,7 +25,9 @@ public abstract class DictAdapter {
 	private static DictAdapter getAdapterInstance() {
 		String version = KindleDevice.VERSION;
 		String className = "";
-		if ("5.3.4".equals(version)) {
+		if ("5.3.5".equals(version)) {
+			className = "com.github.chrox.kpvbooklet.dictadapter.DictQuery535";
+		} else if ("5.3.4".equals(version)) {
 			className = "com.github.chrox.kpvbooklet.dictadapter.DictQuery534";
 		} else if ("5.3.3".equals(version)) {
 			className = "com.github.chrox.kpvbooklet.dictadapter.DictQuery533";

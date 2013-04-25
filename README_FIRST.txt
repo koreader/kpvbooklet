@@ -14,6 +14,7 @@ Supported firmware versions are:
 	* Kindle Touch 5.3.2.1
 	* Kindle Paperwhite 5.3.3
 	* Kindle Paperwhite 5.3.4
+	* Kindle Paperwhite 5.3.5
 
 KPVBooklet is licensed under the MIT license. See the file
 LICENSE for more details.
