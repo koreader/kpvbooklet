@@ -22,8 +22,8 @@ if ! ${TAR_BIN} --version | grep "GNU tar" > /dev/null 2>&1 ; then
 fi
 
 ## Move stuff around a bit to have everything in the right place in the least amount of steps, and without duplicating stuff in the repo
-[ ! -d build/install ] && mkdir build/install
-[ ! -d build/uninstall ] && mkdir build/uninstall
+[ ! -d build/install ] && mkdir -p build/install
+[ ! -d build/uninstall ] && mkdir -p build/uninstall
 
 cp -f install.ffs build/install/install.ffs
 cp -f build/jar/KPVBooklet.jar build/install/KPVBooklet.jar
