@@ -7,16 +7,17 @@ import com.amazon.kindle.util.lipc.LipcPropertyAdapter;
 import com.amazon.kindle.util.lipc.LipcPropertyProvider;
 import com.amazon.kindle.util.lipc.LipcService;
 import com.amazon.kindle.util.lipc.LipcSource;
+
 import com.github.chrox.kpvbooklet.dictadapter.DictAdapter;
 import com.github.chrox.kpvbooklet.util.Log;
 
 /* Usage example:
- 		lipc-set-prop -s com.lab126.booklet.kpvbooklet.dict lookup "kindle"
- 		lipc-get-prop -esq com.lab126.booklet.kpvbooklet.word "kindle"
+ 		lipc-set-prop -s com.github.koreader.kpvbooklet.dict lookup "kindle"
+ 		lipc-get-prop -esq com.github.koreader.kpvbooklet.word "kindle"
 */
 class DictBackend {
-	private static final String dictsource = "com.lab126.booklet.kpvbooklet.dict";
-	private static final String wordsource = "com.lab126.booklet.kpvbooklet.word";
+	private static final String dictsource = "com.github.koreader.kpvbooklet.dict";
+	private static final String wordsource = "com.github.koreader.kpvbooklet.word";
 	private static final PrintStream logger = Log.INSTANCE;
 	
 	private static class WordProperties extends LipcPropertyAdapter {
@@ -29,6 +30,7 @@ class DictBackend {
 
 	private static class DictProperties extends LipcPropertyAdapter {
 		private LipcSource wordSource = null;
+		private DictAdapter dictionary = DictAdapter.INSTANCE;
 		
 		public DictProperties () throws LipcException {
 			wordSource = LipcService.getInstance().createSource(wordsource);
@@ -41,6 +43,10 @@ class DictBackend {
 		        	wordSource.exportStringProperty(word, wordproperty, 1);
 	        	}
 	        }
+	        // TODO: this show property is not finished yet
+	        if(property.equals("show")) {
+	        	DictDialog.post("test", dictionary.getDictView(word));
+	        }
 	    }
 	}
 	
@@ -49,8 +55,10 @@ class DictBackend {
 			LipcSource source = LipcService.getInstance().createSource(dictsource);
 			LipcPropertyProvider dictproperty = new DictProperties();
 			source.exportStringProperty("lookup", dictproperty, 2);
+			source.exportStringProperty("show", dictproperty, 2);
 		} catch(LipcException e) {
 			logger.println("E: " + e.toString());
+			e.printStackTrace(logger);
         }
 	}
 }

@@ -6,6 +6,13 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.LinkedHashMap;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
 import org.json.simple.JSONValue;
 
 import com.github.chrox.kpvbooklet.util.KindleDevice;
@@ -18,6 +25,13 @@ public abstract class DictAdapter {
 	protected static Class Dictionary = null;
 	protected static Class ResultEntry = null;
 	protected static Class Definition = null;
+	protected static Class DictView = null;
+	protected static Class DictControl = null;
+	protected static Class DictPos = null;
+	
+	protected static Class SystemsCardProvider = null;
+	protected static Class DictionaryCard = null;
+	protected static Class ShowDictionaryCard = null;
 	
 	public static final DictAdapter INSTANCE = getAdapterInstance();
 	protected static final PrintStream logger = Log.INSTANCE;
@@ -54,6 +68,83 @@ public abstract class DictAdapter {
 	
 	public void log(String msg) {
 		logger.println(msg);
+	}
+	
+	public JPanel getDictView(String word) {
+		try {
+			// lookup word
+			Object dict = getDicts()[0];
+			Object result = getResultSet(dict, word);
+			
+			// show dictionary card
+			// initialize SystemsCardProvider class and the ReaderSDK field
+			Object cardprovider = SystemsCardProvider.newInstance();
+			Object readersdk = Framework.getDeclaredMethod(getServiceMethod(), 
+					new Class[] {Class.class}).invoke(null, new Object[] {ReaderSDK});
+//			Booklet activeBooklet = (Booklet)ReaderSDK.getDeclaredMethod("mQ", 
+//					new Class[] {}).invoke(readersdk, new Object[] {});
+//			readersdk = (activeBooklet.getBookletContext()).getService(ReaderSDK);
+			Field sdkfield = SystemsCardProvider.getDeclaredField("l");
+			sdkfield.setAccessible(true);
+			sdkfield.set(cardprovider, readersdk);
+			// initialize DictionaryCard class
+			Object dictcard = DictionaryCard.getConstructor(new Class[] {SystemsCardProvider}).
+					newInstance(new Object[] {cardprovider});
+			// set SystemsCardProvider field in DictionaryCard
+			Field cardproviderfield = DictionaryCard.getDeclaredField("h");
+			cardproviderfield.setAccessible(true);
+			cardproviderfield.set(dictcard, cardprovider);
+			// initialize ShowDictionaryCard class
+			Constructor constructor = ShowDictionaryCard.getDeclaredConstructor(new Class[] {DictionaryCard, String.class});
+			constructor.setAccessible(true);
+			Object showdictcard = constructor.newInstance(new Object[] {dictcard, ""});
+			// set Dictionary field in ShowDictionaryCard
+			Field dictfield = ShowDictionaryCard.getDeclaredField("B");
+			dictfield.setAccessible(true);
+			dictfield.set(showdictcard, dict);
+			// set ResultEntry filed in ShowDictionaryCard
+			Field resultfield = ShowDictionaryCard.getDeclaredField("e");
+			resultfield.setAccessible(true);
+			resultfield.set(showdictcard, result);
+			// set word String field in DictionaryCard
+			Field wordfield = DictionaryCard.getDeclaredField("f");
+			wordfield.setAccessible(true);
+			wordfield.set(dictcard, word);
+			// set ShowDictionaryCard field in DictionaryCard
+			Field showcardfield = DictionaryCard.getDeclaredField("i");
+			showcardfield.setAccessible(true);
+			showcardfield.set(dictcard, showdictcard);
+			// invoke actionperformed
+			//ActionEvent action = 
+//			Method perform = ShowDictionaryCard.getDeclaredMethod("actionPerformed", 
+//					new Class[] {ActionEvent.class});
+//			perform.setAccessible(true);
+//			perform.invoke(showdictcard, new Object[] {null});
+			
+			
+			log("I: Name: " + getDictName(dict));
+			log("I: Lang: " + getDictLanguage(dict));
+			log("I: ID: " + getDictID(dict));
+			
+			Object pos = ResultEntry.getField("l").get(result);
+			Dictionary.getDeclaredMethod("TU", new Class[] {DictPos}).
+				invoke(dict, new Object[] {pos});
+			Integer position = (Integer)DictPos.getDeclaredMethod("at", new Class[] {}).invoke(pos, null);
+			log("I: word position: " + position.toString());
+			Object dictcontrol = Dictionary.getDeclaredMethod("Ns", new Class[] {}).invoke(dict, null);
+			Object dictview = DictControl.getDeclaredMethod("ET", new Class[] {Dictionary, ResultEntry}).
+					invoke(dictcontrol, new Object[] {dict, result});
+			JPanel panel = new JPanel();
+			DictView.getDeclaredMethod("bu", new Class[] {JPanel.class}).
+				invoke(dictview, new Object[] {panel});
+			panel.list(logger);
+			return panel;
+			
+		} catch (Throwable t) {
+			log("E: " + t.toString());
+			t.printStackTrace(logger);
+			return null;
+		}
 	}
 	
 	/**

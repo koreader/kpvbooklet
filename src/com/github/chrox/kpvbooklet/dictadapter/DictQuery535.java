@@ -11,8 +11,16 @@ public class DictQuery535 extends DictAdapter{
 			DictMgr = Class.forName("com.amazon.ebook.booklet.reader.sdk.content.dictionary.H");
 			Dictionary = Class.forName("com.amazon.ebook.booklet.reader.sdk.content.dictionary.Dictionary");
 			ResultEntry = Class.forName("com.amazon.ebook.booklet.reader.sdk.content.dictionary.g");
-			// Definition class is deprecated in 5.3.4
+			// Definition class is deprecated in 5.3.4 and up firmware
 			Definition = null;
+			DictView = Class.forName("com.amazon.ebook.booklet.reader.sdk.content.dictionary.Dictionary$DictionaryView");
+			DictControl = Class.forName("com.amazon.ebook.booklet.reader.sdk.content.dictionary.Dictionary$DictionaryController");
+			DictPos = Class.forName("com.amazon.ebook.booklet.reader.sdk.content.dictionary.Dictionary$DictionaryPosition");
+			
+			SystemsCardProvider = Class.forName("com.amazon.ebook.booklet.reader.plugin.systemcards.SystemsCardProvider");
+			DictionaryCard = Class.forName("com.amazon.ebook.booklet.reader.plugin.systemcards.H");
+			ShowDictionaryCard = Class.forName("com.amazon.ebook.booklet.reader.plugin.systemcards.b");
+			
 		} catch (Throwable t) {
 			throw new RuntimeException(t.toString());
 		}
