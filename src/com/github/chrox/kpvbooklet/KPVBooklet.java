@@ -3,11 +3,72 @@ package com.github.chrox.kpvbooklet;
 import java.io.*;
 import java.net.URI;
 import java.lang.reflect.Field;
-
-import com.amazon.ebook.booklet.reader.ReaderBooklet;
+import java.io.PrintStream;
 
 import com.github.chrox.kpvbooklet.ccadapter.CCAdapter;
 import com.github.chrox.kpvbooklet.util.Log;
+
+import com.amazon.ebook.booklet.reader.ReaderBooklet;
+
+import com.amazon.kindle.util.lipc.LipcException;
+import com.amazon.kindle.util.lipc.LipcPropertyAdapter;
+import com.amazon.kindle.util.lipc.LipcPropertyProvider;
+import com.amazon.kindle.util.lipc.LipcService;
+import com.amazon.kindle.util.lipc.LipcSource;
+
+/* Usage example:
+ 		lipc-get-prop -eiq com.github.koreader.kpvbooklet.timer count
+ 		lipc-set-prop -i com.github.koreader.kpvbooklet.timer add 1
+ 		lipc-set-prop -i com.github.koreader.kpvbooklet.timer set 1
+ 		lipc-set-prop -i com.github.koreader.kpvbooklet.timer reset 0
+*/
+class BookletTimer {
+	private static final String timersource = "com.github.koreader.kpvbooklet.timer";
+	private static final PrintStream logger = Log.INSTANCE;
+	private static int counter = 0;
+	
+	private static class TimerProperties extends LipcPropertyAdapter {
+		public int getIntProperty(String property) throws LipcException {
+			if(property.equals("count")) {
+				return counter;
+			} else {
+				return 0;
+			}
+	    }
+		public void setProperty(String property, int val) throws LipcException {
+			if (property.equals("set")) {
+				counter = val;
+			} else if (property.equals("add")) {
+				counter += val;
+			} else if(property.equals("reset")) {
+				counter = 0;
+			}
+	    }
+	}
+	
+	public static int getCounter() {
+		return counter;
+	}
+	
+	public static void addCounter(int count) {
+		counter += count;
+	}
+	
+    public static void addBookletCounter() {
+		try {
+			LipcSource source = LipcService.getInstance().createSource(timersource);
+			LipcPropertyProvider timerproperty = new TimerProperties();
+			source.exportIntProperty("count", timerproperty, 1);
+			source.exportIntProperty("add", timerproperty, 2);
+			source.exportIntProperty("set", timerproperty, 2);
+			source.exportIntProperty("reset", timerproperty, 2);
+			
+		} catch(LipcException e) {
+			logger.println("E: " + e.toString());
+			e.printStackTrace(logger);
+        }
+	}
+}
 
 /**
  * A booklet for launching koreader directly from Kindle home screen.
@@ -31,10 +92,12 @@ public class KPVBooklet extends ReaderBooklet {
 	public KPVBooklet() {
 		log("I: KPVBooklet");
 		DictBackend.addDictBackend();
+		BookletTimer.addBookletCounter();
 	}
 	
 	public void start(URI contentURI) {	
 		log("I: start()");
+		log("I: kpvbooklet launching times " + BookletTimer.getCounter());
 		log("I: contentURI " + contentURI.toString());
 		String path = contentURI.getPath();
 		int dot = path.lastIndexOf('.');
@@ -69,24 +132,12 @@ public class KPVBooklet extends ReaderBooklet {
 		
 		Thread thread = new ReaderWaitThread(history_dir, path);
 		thread.start();
-		
-		// wait up to 3 seconds for pillow disable in koreader.sh
-		try {
-			Process p = Runtime.getRuntime().exec("lipc-wait-event -s 3 com.github.koreader.kpvbooklet disablePillow");
-			p.waitFor();
-		} catch(Exception e) {
-			log("E: " + e.toString());
-		}
-		// enable pillow for activity indicator
-		try {
-			Runtime.getRuntime().exec("lipc-set-prop com.lab126.pillow disableEnablePillow enable");
-		} catch (IOException e) {
-			log("E: " + e.toString());
-		}
 	}
 
 	public void stop() {
 		log("I: stop()");
+		log("I: add kpvbooklet launching times");
+		BookletTimer.addCounter(1);
 		if (readerProcess != null) {
 			try {
 				killQuitProcess(readerProcess);

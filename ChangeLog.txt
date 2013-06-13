@@ -1,3 +1,7 @@
+2013-06-13 16:29  chrox
+
+	* add booklet counter to avoid blank screen
+	
 2013-04-25 17:16  chrox
 
 	* add dictionary backend for 5.3.5
