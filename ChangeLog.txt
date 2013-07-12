@@ -1,3 +1,7 @@
+2013-07-12 21:14  chrox
+
+	* keep current location of native doc browser when launching koreader 
+	
 2013-06-13 16:29  chrox
 
 	* add booklet counter to avoid blank screen
