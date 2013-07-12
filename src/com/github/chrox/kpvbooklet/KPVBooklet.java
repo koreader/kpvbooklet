@@ -193,9 +193,9 @@ public class KPVBooklet extends ReaderBooklet {
 				log("E: " + e.toString());
 			}
 			
-			// sent go home lipc event after reader exits
+			// send backward lipc event after reader exits
 			try {
-				Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd start app://com.lab126.booklet.home");
+				Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd backward 0");
 			} catch (IOException e) {
 				log("E: " + e.toString());
 			}
