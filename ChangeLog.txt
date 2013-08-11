@@ -1,3 +1,7 @@
+2013-08-11 23:41  chrox
+
+	* disable dictionary backend
+	
 2013-07-12 21:14  chrox
 
 	* keep current location of native doc browser when launching koreader 

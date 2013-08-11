@@ -91,7 +91,6 @@ public class KPVBooklet extends ReaderBooklet {
 	
 	public KPVBooklet() {
 		log("I: KPVBooklet");
-		DictBackend.addDictBackend();
 		BookletTimer.addBookletCounter();
 	}
 	

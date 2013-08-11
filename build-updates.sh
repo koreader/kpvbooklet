@@ -2,7 +2,7 @@
 
 HACKNAME="kpvbooklet"
 PKGNAME="${HACKNAME}"
-PKGVER="0.4.9"
+PKGVER="0.5.0"
 
 # We need kindletool (https://github.com/NiLuJe/KindleTool) in $PATH
 if (( $(kindletool version | wc -l) == 1 )) ; then
