@@ -1,3 +1,7 @@
+2013-11-21 16:44  chrox
+
+	* add support for PaperWhite 2
+	
 2013-08-11 23:41  chrox
 
 	* disable dictionary backend
