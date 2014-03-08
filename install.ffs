@@ -47,6 +47,11 @@ progress 40 "Backuping appreg.db"
 progress 60 "Updating appreg.db"
 sqlite3 /var/local/appreg.db < mimes.sql
 
+if [ "$VERSION" \> "5.4" ]; then
+	progress 70 "Creating the userstore exec flag file"
+	touch "/MNTUS_EXEC"
+fi
+
 progress 80 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
 
