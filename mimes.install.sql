@@ -1,6 +1,6 @@
 INSERT INTO "handlerIds" VALUES('com.github.koreader.kpvbooklet');
 INSERT INTO "properties" VALUES('com.github.koreader.kpvbooklet','lipcId','com.github.koreader.kpvbooklet');
-INSERT INTO "properties" VALUES('com.github.koreader.kpvbooklet','jar','/opt/amazon/ebook/booklet/KPVBooklet.jar');
+INSERT INTO "properties" VALUES('com.github.koreader.kpvbooklet','jar','/var/local/KPVBooklet.jar');
 INSERT INTO "properties" VALUES('com.github.koreader.kpvbooklet','detailFactoryPath','/opt/amazon/ebook/lib/detail_view.jar');
 INSERT INTO "properties" VALUES('com.github.koreader.kpvbooklet','detailFactoryClass','com.amazon.ebook.booklet.reader.impl.detail.ReaderDetailViewFactory');
 

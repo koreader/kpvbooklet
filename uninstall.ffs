@@ -25,7 +25,7 @@ progress 10 "Mounting r/w"
 mntroot rw || fail "Unable to mount r/w"
 
 progress 20 "Removing KPVBooklet.jar"
-[ -f /opt/amazon/ebook/booklet/KPVBooklet.jar ] && rm /opt/amazon/ebook/booklet/KPVBooklet.jar || fail "Unable to delete KPVBooklet.jar"
+[ -f /opt/amazon/ebook/booklet/KPVBooklet.jar ] && rm /opt/amazon/ebook/booklet/KPVBooklet.jar
 
 if [ "$VERSION" == "5.1.2" ]; then
 	progress 30 "Removing extractors"
@@ -39,7 +39,8 @@ if [ "$VERSION" == "5.1.2" ]; then
 fi
 
 progress 50 "Restoring appreg.db"
-[ -f /var/local/appreg.db.bak ] && mv -f /var/local/appreg.db.bak /var/local/appreg.db || fail "Unable to restore appreg.db"
+[ -f /var/local/appreg.db.bak ] && rm -f /var/local/appreg.db.bak
+sqlite3 /var/local/appreg.db < mimes.uninstall.sql
 
 progress 80 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"

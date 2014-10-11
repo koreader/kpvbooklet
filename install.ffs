@@ -41,11 +41,8 @@ if [ "$VERSION" == "5.1.2" ]; then
 	done
 fi
 
-progress 40 "Backuping appreg.db"
-[ ! -f /var/local/appreg.db.bak ] && cp /var/local/appreg.db /var/local/appreg.db.bak
-
-progress 60 "Updating appreg.db"
-sqlite3 /var/local/appreg.db < mimes.sql
+progress 40 "Updating appreg.db"
+sqlite3 /var/local/appreg.db < mimes.install.sql
 
 if [ "$VERSION" \> "5.4" ]; then
 	progress 70 "Creating the userstore exec flag file"
