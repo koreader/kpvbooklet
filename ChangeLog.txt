@@ -1,3 +1,7 @@
+2014-11-21 10:32  chrox
+
+	* add support for Kindle Basic & Voyage
+
 2014-10-11 14:29  chrox
 
 	* add support for more models of PaperWhite 2
