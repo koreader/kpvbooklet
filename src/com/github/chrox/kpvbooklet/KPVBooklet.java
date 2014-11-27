@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.URI;
 import java.lang.reflect.Field;
 import java.io.PrintStream;
+import java.io.File;
 
 import com.github.chrox.kpvbooklet.ccadapter.CCAdapter;
 import com.github.chrox.kpvbooklet.util.Log;
@@ -83,6 +84,8 @@ public class KPVBooklet extends ReaderBooklet {
 	private final String kor_history = "/mnt/us/koreader/history/";
 	private final String kpdfview = "/mnt/us/kindlepdfviewer/kpdf.sh";
 	private final String kpv_history = "/mnt/us/kindlepdfviewer/history/";
+	private final String gandalf = "/var/local/mkk/gandalf";
+	private final String su = "/var/local/mkk/su";
 	
 	private Process readerProcess;
 	private String history_dir;
@@ -109,7 +112,11 @@ public class KPVBooklet extends ReaderBooklet {
 			}
 		}
 		log("I: Opening " + path + " with koreader...");
-		String[] cmd = new String[] {koreader, path};
+		if (new File(gandalf).exists()) {
+			String[] cmd = new String[] {su, "-s", "/bin/ash", "-c", koreader + " \"" + path + "\""};
+		} else {
+			String[] cmd = new String[] {koreader, path};
+		}
 		try {
 			readerProcess = Runtime.getRuntime().exec(cmd);
 			history_dir = kor_history;
