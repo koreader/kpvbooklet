@@ -1,3 +1,7 @@
+2014-11-27 20:32  chrox
+
+	* add support for firmware version 5.6.1
+
 2014-11-21 10:32  chrox
 
 	* add support for Kindle Basic & Voyage

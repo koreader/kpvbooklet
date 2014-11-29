@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.URI;
 import java.lang.reflect.Field;
 import java.io.PrintStream;
-import java.io.File;
 
 import com.github.chrox.kpvbooklet.ccadapter.CCAdapter;
 import com.github.chrox.kpvbooklet.util.Log;
@@ -27,7 +26,7 @@ class BookletTimer {
 	private static final String timersource = "com.github.koreader.kpvbooklet.timer";
 	private static final PrintStream logger = Log.INSTANCE;
 	private static int counter = 0;
-	
+
 	private static class TimerProperties extends LipcPropertyAdapter {
 		public int getIntProperty(String property) throws LipcException {
 			if(property.equals("count")) {
@@ -46,15 +45,15 @@ class BookletTimer {
 			}
 	    }
 	}
-	
+
 	public static int getCounter() {
 		return counter;
 	}
-	
+
 	public static void addCounter(int count) {
 		counter += count;
 	}
-	
+
     public static void addBookletCounter() {
 		try {
 			LipcSource source = LipcService.getInstance().createSource(timersource);
@@ -63,7 +62,7 @@ class BookletTimer {
 			source.exportIntProperty("add", timerproperty, 2);
 			source.exportIntProperty("set", timerproperty, 2);
 			source.exportIntProperty("reset", timerproperty, 2);
-			
+
 		} catch(LipcException e) {
 			logger.println("E: " + e.toString());
 			e.printStackTrace(logger);
@@ -73,9 +72,9 @@ class BookletTimer {
 
 /**
  * A booklet for launching koreader directly from Kindle home screen.
- * 
+ *
  * Modified by chrox@github.
- * 
+ *
  * @author Patric Mueller &lt;bhaak@gmx.net&gt;
  */
 public class KPVBooklet extends ReaderBooklet {
@@ -86,18 +85,30 @@ public class KPVBooklet extends ReaderBooklet {
 	private final String kpv_history = "/mnt/us/kindlepdfviewer/history/";
 	private final String gandalf = "/var/local/mkk/gandalf";
 	private final String su = "/var/local/mkk/su";
-	
+	private static String PRIVILEGE_HINT_PREFIX = "?";
+
 	private Process readerProcess;
 	private String history_dir;
 	private CCAdapter ccrequest = CCAdapter.INSTANCE;
 	private static final PrintStream logger = Log.INSTANCE;
-	
+
 	public KPVBooklet() {
+		// Check current privileges...
+		String currentUsername = System.getProperty("user.name");
+		if ("root".equals(currentUsername)) {
+			PRIVILEGE_HINT_PREFIX = "#";
+		} else {
+			if (new File(gandalf).exists()) {
+				PRIVILEGE_HINT_PREFIX = "$";
+			} else {
+				PRIVILEGE_HINT_PREFIX = "%";
+			}
+		}
 		log("I: KPVBooklet");
 		BookletTimer.addBookletCounter();
 	}
-	
-	public void start(URI contentURI) {	
+
+	public void start(URI contentURI) {
 		log("I: start()");
 		log("I: kpvbooklet launching times " + BookletTimer.getCounter());
 		log("I: contentURI " + contentURI.toString());
@@ -112,10 +123,12 @@ public class KPVBooklet extends ReaderBooklet {
 			}
 		}
 		log("I: Opening " + path + " with koreader...");
-		if (new File(gandalf).exists()) {
-			String[] cmd = new String[] {su, "-s", "/bin/ash", "-c", koreader + " \"" + path + "\""};
+		String[] cmd;
+		if ("$".equals(PRIVILEGE_HINT_PREFIX)) {
+			log("I: Call Gandalf for help...");
+			cmd = new String[] {su, "-s", "/bin/ash", "-c", koreader + " \"" + path + "\""};
 		} else {
-			String[] cmd = new String[] {koreader, path};
+			cmd = new String[] {"/bin/sh", koreader, path};
 		}
 		try {
 			readerProcess = Runtime.getRuntime().exec(cmd);
@@ -127,7 +140,7 @@ public class KPVBooklet extends ReaderBooklet {
 		// fallback to kpdf.sh if we cannot exec koreader.sh
 		if (readerProcess == null) {
 			log("I: Opening " + path + " with kindlepdfviewer...");
-			cmd[0] = kpdfview;
+			cmd[cmd.length - 2] = kpdfview;
 			history_dir = kpv_history;
 			try {
 				readerProcess = Runtime.getRuntime().exec(cmd);
@@ -135,7 +148,7 @@ public class KPVBooklet extends ReaderBooklet {
 				log("E: " + e.toString());
 			}
 		}
-		
+
 		Thread thread = new ReaderWaitThread(history_dir, path);
 		thread.start();
 	}
@@ -154,10 +167,10 @@ public class KPVBooklet extends ReaderBooklet {
 		}
 		super.stop();
 	}
-	
-	/** 
+
+	/**
 	 * Send a QUIT signal to a process.
-	 * 
+	 *
 	 * See http://stackoverflow.com/questions/2950338/how-can-i-kill-a-linux-process-in-java-with-sigkill-process-destroy-does-sigte#answer-2951193
 	 */
 	private void killQuitProcess(Process process)
@@ -173,13 +186,13 @@ public class KPVBooklet extends ReaderBooklet {
 			throw new IllegalArgumentException("Needs to be a UNIXProcess");
 		}
 	}
-	
-	/** This thread waits for reader process to finish and then update content catalog  
+
+	/** This thread waits for reader process to finish and then update content catalog
 	 */
 	class ReaderWaitThread extends Thread {
 		private String history_dir = "";
 		private String content_path = "";
-		
+
 		public ReaderWaitThread(String dir, String path) {
 			history_dir = dir;
 			content_path = path;
@@ -191,14 +204,14 @@ public class KPVBooklet extends ReaderBooklet {
 			} catch (InterruptedException e) {
 				log("E: " + e.toString());
 			}
-			
+
 			try {
 				// update content catlog after reader exits
 				ccrequest.updateCC(content_path, extractPercentFinished(history_dir, content_path));
 			} catch (Exception e) {
 				log("E: " + e.toString());
 			}
-			
+
 			// send backward lipc event after reader exits
 			try {
 				Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd backward 0");
@@ -207,7 +220,7 @@ public class KPVBooklet extends ReaderBooklet {
 			}
 		}
 	}
-	
+
 	/**
 	 * Extract last_percent in document history file
 	 * @param file path
@@ -241,7 +254,7 @@ public class KPVBooklet extends ReaderBooklet {
 		}
 		return percent_finished;
 	}
-	
+
 	private void log(String msg) {
 		logger.println(msg);
 	}
