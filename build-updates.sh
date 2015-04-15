@@ -2,7 +2,7 @@
 
 HACKNAME="kpvbooklet"
 PKGNAME="${HACKNAME}"
-PKGVER="0.5.8"
+PKGVER="0.6.0"
 
 # We need kindletool (https://github.com/NiLuJe/KindleTool) in $PATH
 if (( $(kindletool version | wc -l) == 1 )) ; then
@@ -28,6 +28,7 @@ fi
 cp -f install.ffs build/install/install.ffs
 cp -f build/jar/KPVBooklet.jar build/install/KPVBooklet.jar
 cp -f mimes.install.sql build/install/mimes.install.sql
+cp -f whispertouch.install.sql build/install/whispertouch.install.sql
 
 cp -f uninstall.ffs build/uninstall/uninstall.ffs
 cp -f mimes.uninstall.sql build/uninstall/mimes.uninstall.sql

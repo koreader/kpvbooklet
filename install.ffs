@@ -44,6 +44,14 @@ fi
 progress 40 "Updating appreg.db"
 sqlite3 /var/local/appreg.db < mimes.install.sql
 
+if [ "$VERSION" \> "5.6" ]; then
+	WHISPERTOUCH=`sqlite3 /var/local/appreg.db .dump|grep "'whisper-touch','supported'"|wc -l`
+	if [ "$WHISPERTOUCH" \> 0 ]; then
+		progress 50 "Enable whisper touch for Kindle Voyage"
+		sqlite3 /var/local/appreg.db < whispertouch.install.sql
+	fi
+fi
+
 if [ "$VERSION" \> "5.4" ]; then
 	progress 70 "Creating the userstore exec flag file"
 	touch "/MNTUS_EXEC"

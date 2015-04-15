@@ -1,3 +1,7 @@
+2015-04-15 10:57  chrox
+
+	* add whisper touch support for Kindle Voyage
+
 2014-11-27 20:32  chrox
 
 	* add support for firmware version 5.6.1
