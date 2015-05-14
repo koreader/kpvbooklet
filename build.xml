@@ -25,6 +25,7 @@
     	<pathelement location="${env.KINDLE_EBOOK}/lib/ReaderContentSDK.jar"/>
     	<pathelement location="${env.KINDLE_EBOOK}/booklet/Reader.jar"/>
     	<pathelement location="${env.KINDLE_EBOOK}/booklet/AbstractReaderBooklet.jar"/>
+    	<pathelement location="${env.KINDLE_EBOOK}/lib/concierge-1.0.0.jar"/>
     </path>
 
     <target name="compile" depends="checkProperties">
