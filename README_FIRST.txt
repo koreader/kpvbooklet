@@ -1,7 +1,7 @@
-KPVBooklet for Kindle Touch and Kindle Paperwhite
+KPVBooklet for Kindle Touch, Kindle Paperwhite and Kindle Voyage
 =================================================
 
-KPVBooklet is a Kindle booklet for starting KOReader/kindlepdfviewer.
+KPVBooklet is a Kindle booklet for starting KOReader.
 It also updates last access and percentage finished information in Kindle's
 content catalog entry of the opened document.
 
@@ -23,6 +23,9 @@ Supported firmware versions are:
 	* Kindle Paperwhite 5.4.2
 	* Kindle Paperwhite 5.4.3
 	* Kindle Paperwhite 5.4.4
+	* Kindle Touch2 5.6.0 
+	* Kindle Voyage 5.6.1
+	* Kindle Voyage 5.6.2
 
 KPVBooklet is licensed under the MIT license. See the file
 LICENSE for more details.
