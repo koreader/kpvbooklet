@@ -82,3 +82,5 @@ INSERT OR IGNORE INTO "properties" VALUES('archive.displaytags.mimetypes','appli
 INSERT OR IGNORE INTO "associations" VALUES('com.lab126.generic.extractor','extractor','GL:*.zip','true');
 INSERT OR IGNORE INTO "associations" VALUES('com.github.koreader.kpvbooklet','application','MT:application/zip','true');
 
+UPDATE "associations" SET defaultAssoc = 'false' WHERE interface = 'application' and contentId = 'MT:application/pdf' and handlerId = 'com.lab126.booklet.reader';
+UPDATE "associations" SET defaultAssoc = 'true' WHERE interface = 'application' and contentId = 'MT:application/pdf' and handlerId = 'com.github.koreader.kpvbooklet';

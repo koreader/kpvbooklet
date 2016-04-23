@@ -8,7 +8,7 @@ content catalog entry of the opened document.
 Supported firmware versions are:
 	* Kindle Touch 5.1.2
 	* Kindle Paperwhite 5.2.0
- 	* Kindle Paperwhite 5.3.0
+	* Kindle Paperwhite 5.3.0
 	* Kindle Paperwhite 5.3.1
 	* Kindle Touch 5.3.2
 	* Kindle Touch 5.3.2.1
@@ -23,9 +23,11 @@ Supported firmware versions are:
 	* Kindle Paperwhite 5.4.2
 	* Kindle Paperwhite 5.4.3
 	* Kindle Paperwhite 5.4.4
-	* Kindle Touch2 5.6.0 
+	* Kindle Touch2 5.6.0
 	* Kindle Voyage 5.6.1
 	* Kindle Voyage 5.6.2
+	* Kindle Voyage 5.6.5
+	* Kindle Voyage 5.7.4
 
 KPVBooklet is licensed under the MIT license. See the file
 LICENSE for more details.

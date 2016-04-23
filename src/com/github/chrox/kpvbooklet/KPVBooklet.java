@@ -116,7 +116,8 @@ public class KPVBooklet extends ReaderBooklet {
 		int dot = path.lastIndexOf('.');
 		String ext = (dot == -1) ? "" : path.substring(dot+1).toLowerCase();
 		if (ext.equals("pdf")) {
-			if ( contentURI.getQuery() != null ) {
+			String query = contentURI.getQuery();
+			if (query != null && query.indexOf("action=goto") >= 0) {
 				log("I: Opening " + path + " with native reader...");
 				super.start(contentURI);
 				return;

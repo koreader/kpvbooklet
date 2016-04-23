@@ -11,3 +11,5 @@ DELETE FROM "properties" WHERE value='FB2' OR value='PDB' OR value='RTF' OR valu
 DELETE FROM "associations" WHERE contentId='GL:*.djvu' OR contentId='GL:*.epub' OR contentId='GL:*.cbz' OR contentId='GL:*.chm';
 DELETE FROM "associations" WHERE contentId='GL:*.doc' OR contentId='GL:*.fb2' OR contentId='GL:*.pdb' OR contentId='GL:*.rtf';
 DELETE FROM "associations" WHERE contentId='GL:*.tcr' OR contentId='GL:*.xps' OR contentId='GL:*.zip';
+
+UPDATE "associations" SET defaultAssoc = 'true' WHERE interface = 'application' and contentId = 'MT:application/pdf' and handlerId = 'com.lab126.booklet.reader';
