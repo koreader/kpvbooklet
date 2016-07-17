@@ -228,13 +228,23 @@ public class KPVBooklet extends ReaderBooklet {
 	 */
 	private float extractPercentFinished(String history_dir, String path) {
 		float percent_finished = 0.0f;
-		int slash = path.lastIndexOf('/');
-		String parentname = (slash == -1) ? "" : path.substring(0, slash+1);
-		String basename = (slash == -1) ? "" : path.substring(slash+1);
-		String histroypath = history_dir + "[" + parentname.replace('/','#') + "] " + basename + ".lua";
-		log("I: found history file: " + histroypath);
+		int lastSlash = path.lastIndexOf('/');
+		String parentname = (lastSlash == -1) ? "" : path.substring(0, lastSlash+1);
+		String filename = (lastSlash == -1) ? "" : path.substring(lastSlash+1);
+		int lastDot = filename.lastIndexOf('.');
+		String basename = (lastDot == -1) ? "" : filename.substring(0, lastDot);
+		String extname = (lastDot == -1) ? "" : filename.substring(lastDot+1);
+		String histroyPath = history_dir + "[" + parentname.replace('/','#') + "] " + filename + ".lua";
+		String metadataPath = parentname + basename + ".sdr/metadata." + extname + ".lua";
+		File settingsFile = new File(metadataPath);
+		if (!settingsFile.exists()) {
+			settingsFile = new File(histroyPath);
+		}
+
+		log("I: found document settings file: " + settingsFile.getPath());
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(histroypath)));
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(new FileInputStream(settingsFile.getPath())));
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.indexOf("[\"percent_finished\"]") > -1) {
