@@ -57,7 +57,10 @@ if [ "$VERSION" \> "5.4" ]; then
 	touch "/MNTUS_EXEC"
 fi
 
-progress 80 "Mounting ro"
+progress 80 "Installing KUAL Extension"
+cp -r extensions/kpvbooklet /mnt/us/extensions/ || fail "Unable to copy KUAL Extension"
+
+progress 90 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
 
 progress 100 "Installation complete."

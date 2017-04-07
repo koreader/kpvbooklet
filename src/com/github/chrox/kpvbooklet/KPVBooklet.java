@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.URI;
 import java.lang.reflect.Field;
 import java.io.PrintStream;
+import java.util.Properties;
+
+import org.kxml2.io.KXmlParser;
 
 import com.github.chrox.kpvbooklet.ccadapter.CCAdapter;
 import com.github.chrox.kpvbooklet.util.Log;
@@ -34,7 +37,7 @@ class BookletTimer {
 			} else {
 				return 0;
 			}
-	    }
+		}
 		public void setProperty(String property, int val) throws LipcException {
 			if (property.equals("set")) {
 				counter = val;
@@ -43,7 +46,7 @@ class BookletTimer {
 			} else if(property.equals("reset")) {
 				counter = 0;
 			}
-	    }
+		}
 	}
 
 	public static int getCounter() {
@@ -54,7 +57,7 @@ class BookletTimer {
 		counter += count;
 	}
 
-    public static void addBookletCounter() {
+	public static void addBookletCounter() {
 		try {
 			LipcSource source = LipcService.getInstance().createSource(timersource);
 			LipcPropertyProvider timerproperty = new TimerProperties();
@@ -66,7 +69,7 @@ class BookletTimer {
 		} catch(LipcException e) {
 			logger.println("E: " + e.toString());
 			e.printStackTrace(logger);
-        }
+		}
 	}
 }
 
@@ -74,23 +77,28 @@ class BookletTimer {
  * A booklet for launching koreader directly from Kindle home screen.
  *
  * Modified by chrox@github.
+ * Modified by cytown@github
  *
  * @author Patric Mueller &lt;bhaak@gmx.net&gt;
  */
 public class KPVBooklet extends ReaderBooklet {
 
-	private final String koreader = "/mnt/us/koreader/koreader.sh";
-	private final String kor_history = "/mnt/us/koreader/history/";
-	private final String kpdfview = "/mnt/us/kindlepdfviewer/kpdf.sh";
-	private final String kpv_history = "/mnt/us/kindlepdfviewer/history/";
-	private final String gandalf = "/var/local/mkk/gandalf";
-	private final String su = "/var/local/mkk/su";
+	private final String BOOKLET_CONFIG = "/mnt/us/extensions/kpvbooklet/bin/booklet.ini";
+	private final String HACKUP_READER = "/mnt/us/hackedupreader/bin/cr3";
+	private final String HACKUP_READER_HISTORY = "/mnt/us/hackedupreader/.settings/cr3hist.bmk";
+	private final String KOREADER = "/mnt/us/koreader/koreader.sh";
+	private final String KOR_HISTORY = "/mnt/us/koreader/history/";
+	private final String KPDFVIEW = "/mnt/us/kindlepdfviewer/kpdf.sh";
+	private final String KPV_HISTORY = "/mnt/us/kindlepdfviewer/history/";
+	private final String GANDALF = "/var/local/mkk/gandalf";
+	private final String SU = "/var/local/mkk/su";
 	private static String PRIVILEGE_HINT_PREFIX = "?";
 
 	private Process readerProcess;
 	private String history_dir;
 	private CCAdapter ccrequest = CCAdapter.INSTANCE;
-	private static final PrintStream logger = Log.INSTANCE;
+	private static final PrintStream LOGGER = Log.INSTANCE;
+	private boolean isHackupExist;
 
 	public KPVBooklet() {
 		// Check current privileges...
@@ -98,14 +106,44 @@ public class KPVBooklet extends ReaderBooklet {
 		if ("root".equals(currentUsername)) {
 			PRIVILEGE_HINT_PREFIX = "#";
 		} else {
-			if (new File(gandalf).exists()) {
+			if (new File(GANDALF).exists()) {
 				PRIVILEGE_HINT_PREFIX = "$";
 			} else {
 				PRIVILEGE_HINT_PREFIX = "%";
 			}
 		}
 		log("I: KPVBooklet");
+		isHackupExist = new File(HACKUP_READER).exists();
+
 		BookletTimer.addBookletCounter();
+	}
+
+	private String getOpenType(String type) {
+		Properties prop = new Properties();
+		InputStream input = null;
+		String openType = "1";
+
+		try {
+
+			input = new FileInputStream(BOOKLET_CONFIG);
+
+			// load a properties file
+			prop.load(input);
+
+			// get the property value and print it out
+			openType = (prop.getProperty(type, "1"));
+		} catch (Exception ex) {
+			log("W:" + ex.toString());
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (Exception e) {
+					log("W:" + e.toString());
+				}
+			}
+		}
+		return openType;
 	}
 
 	public void start(URI contentURI) {
@@ -115,34 +153,36 @@ public class KPVBooklet extends ReaderBooklet {
 		String path = contentURI.getPath();
 		int dot = path.lastIndexOf('.');
 		String ext = (dot == -1) ? "" : path.substring(dot+1).toLowerCase();
-		if (ext.equals("pdf")) {
-			String query = contentURI.getQuery();
-			if (query != null && query.indexOf("action=goto") >= 0) {
-				log("I: Opening " + path + " with native reader...");
-				super.start(contentURI);
-				return;
-			}
+		String openType = getOpenType(ext);
+		if (openType.equals("0")) {
+			log("I: Opening " + path + " with native reader...");
+			super.start(contentURI);
+			return;
 		}
-		log("I: Opening " + path + " with koreader...");
+		String reader = KOREADER;
+		if (isHackupExist && openType.equals("2")) {
+			reader = HACKUP_READER;
+		}
+		log("I: Opening " + path + " with " + reader + "...");
 		String[] cmd;
 		if ("$".equals(PRIVILEGE_HINT_PREFIX)) {
 			log("I: Call Gandalf for help...");
-			cmd = new String[] {su, "-s", "/bin/ash", "-c", koreader + " \"" + path + "\""};
+			cmd = new String[] {SU, "-s", "/bin/ash", "-c", reader + " \"" + path + "\""};
 		} else {
-			cmd = new String[] {"/bin/sh", koreader, path};
+			cmd = new String[] {"/bin/sh", reader, path};
 		}
 		try {
 			readerProcess = Runtime.getRuntime().exec(cmd);
-			history_dir = kor_history;
+			history_dir = KOR_HISTORY;
 		} catch (IOException e) {
 			readerProcess = null;
 			log("W: koreader not found, will check legacy kindlepdfviewer instead.");
 		}
 		// fallback to kpdf.sh if we cannot exec koreader.sh
-		if (readerProcess == null) {
+		if (readerProcess == null && !openType.equals("2")) {
 			log("I: Opening " + path + " with kindlepdfviewer...");
-			cmd[cmd.length - 2] = kpdfview;
-			history_dir = kpv_history;
+			cmd[cmd.length - 2] = KPDFVIEW;
+			history_dir = KPV_HISTORY;
 			try {
 				readerProcess = Runtime.getRuntime().exec(cmd);
 			} catch (IOException e) {
@@ -150,7 +190,7 @@ public class KPVBooklet extends ReaderBooklet {
 			}
 		}
 
-		Thread thread = new ReaderWaitThread(history_dir, path);
+		Thread thread = new ReaderWaitThread(history_dir, path, openType);
 		thread.start();
 	}
 
@@ -193,10 +233,12 @@ public class KPVBooklet extends ReaderBooklet {
 	class ReaderWaitThread extends Thread {
 		private String history_dir = "";
 		private String content_path = "";
+		private String openType = "";
 
-		public ReaderWaitThread(String dir, String path) {
+		public ReaderWaitThread(String dir, String path, String type) {
 			history_dir = dir;
 			content_path = path;
+			openType = type;
 		}
 		public void run() {
 			try {
@@ -208,7 +250,16 @@ public class KPVBooklet extends ReaderBooklet {
 
 			try {
 				// update content catlog after reader exits
-				ccrequest.updateCC(content_path, extractPercentFinished(history_dir, content_path));
+				float last_percent = 0f;
+				if (openType.equals("2")) {
+					last_percent = extractPercentFinished2(content_path);
+				} else {
+					last_percent = extractPercentFinished(history_dir, content_path);
+				}
+				log("I: update percent: " + last_percent);
+				if (last_percent >= 0f) {
+					ccrequest.updateCC(content_path, last_percent);
+				}
 			} catch (Exception e) {
 				log("E: " + e.toString());
 			}
@@ -258,15 +309,83 @@ public class KPVBooklet extends ReaderBooklet {
 						percent_finished = Float.parseFloat(value) * 100;
 					}
 				}
-		    }
-		    br.close();
+			}
+			br.close();
 		} catch (IOException e) {
 			log("E: " + e.toString());
 		}
 		return percent_finished;
 	}
 
+	/**
+	 * Extract last_percent in document history file
+	 * @param file path
+	 */
+	private float extractPercentFinished2(String path) {
+		float percent_finished = -1.0f;
+		int lastSlash = path.lastIndexOf('/');
+		String parentname = (lastSlash == -1) ? "" : path.substring(0, lastSlash+1);
+		String filename = (lastSlash == -1) ? "" : path.substring(lastSlash+1);
+		File settingsFile = new File(HACKUP_READER_HISTORY);
+		if (!settingsFile.exists()) {
+			return -1f;
+		}
+
+		log("I: find hackedupreader settings for: " + path);
+		FileInputStream stream = null;
+		try {
+			KXmlParser parser = new KXmlParser();
+			parser.setFeature(KXmlParser.FEATURE_PROCESS_NAMESPACES, true);
+			stream = new FileInputStream(settingsFile);
+			// skip it because the file header has <feff>
+			stream.skip(3);
+			parser.setInput(stream, "UTF-8");
+			String currName = null;
+			String currPath = null;
+			while(parser.next() != KXmlParser.END_DOCUMENT){
+				if (parser.getEventType() == KXmlParser.START_TAG) {
+
+					String n = parser.getName();
+					// log("name: " + n);
+					if ("file".equals(n)) {
+						currName = null;
+						currPath = null;
+					}
+					if ("doc-filename".equals(n)) {
+						currName = parser.nextText();
+						log("filename === " + currName);
+					}
+					if ("doc-filepath".equals(n)) {
+						currPath = parser.nextText();
+						log("path === " + currPath);
+					}
+					if ("bookmark".equals(n) && filename.equals(currName) && parentname.equals(currPath)) {
+						String type = parser.getAttributeValue(null, "type");
+						if ("lastpos".equals(type)) {
+							String percent = parser.getAttributeValue(null, "percent");
+							percent = percent.substring(0, percent.length() - 1);
+							float fff = Float.parseFloat(percent);
+							log("found === " + type + " : " + percent + " : " + fff);
+							percent_finished = fff;
+							break;
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log("E: " + e.toString());
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (Exception e) {}
+			}
+		}
+		return percent_finished;
+	}
+
 	private void log(String msg) {
-		logger.println(msg);
+		LOGGER.println(msg);
 	}
 }

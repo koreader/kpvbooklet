@@ -1,0 +1,210 @@
+{
+	"items": [
+	{
+		"name": "KPVBooklet Settings",
+		"if": "\"/mnt/us/hackedupreader/bin/cr3\" -f",
+		"priority": 5,
+		"items": [
+
+			{
+				"name": "PDF file opened by KO* (Original)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdf=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdf=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "pdf 0",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set PDF opened by Original"
+			},
+			{
+				"name": "PDF file opened by Original* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdf=0$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "pdf 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set PDF opened by KOReader"
+			},
+			{
+				"name": "TXT file opened by KO* (HackedUp, Original)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^txt=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^txt=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "txt 2",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set TXT opened by HackedUpReader"
+			},
+			{
+				"name": "TXT file opened by HackedUp* (Original, KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^txt=2$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "txt 0",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set TXT opened by Original"
+			},
+			{
+				"name": "TXT file opened by Original* (KO, HackedUp)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^txt=0$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "txt 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set TXT opened by KOReader"
+			},
+			{
+				"name": "EPUB file opened by KO* (HackedUp)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^epub=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^epub=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "epub 2",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set EPUB opened by HackedUpReader"
+			},
+			{
+				"name": "EPUB file opened by HackedUp* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^epub=2$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "epub 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set EPUB opened by KOReader"
+			},
+			{
+				"name": "PDB file opened by KO* (HackedUp)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdb=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdb=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "pdb 2",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set PDB opened by HackedUpReader"
+			},
+			{
+				"name": "PDB file opened by HackedUp* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdb=2$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "pdb 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set PDB opened by KOReader"
+			},
+			{
+				"name": "FB2 file opened by KO* (HackedUp)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^fb2=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^fb2=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "fb2 2",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set FB2 opened by HackedUpReader"
+			},
+			{
+				"name": "FB2 file opened by HackedUp* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^fb2=2$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "fb2 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set FB2 opened by KOReader"
+			},
+			{
+				"name": "RTF file opened by KO* (HackedUp)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^rtf=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^rtf=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "rtf 2",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set RTF opened by HackedUpReader"
+			},
+			{
+				"name": "RTF file opened by HackedUp* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^rtf=2$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "rtf 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set RTF opened by KOReader"
+			},
+			{
+				"name": "CHM file opened by KO* (HackedUp)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^chm=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^chm=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "chm 2",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set CHM opened by HackedUpReader"
+			},
+			{
+				"name": "CHM file opened by HackedUp* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^chm=2$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "chm 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set CHM opened by KOReader"
+			}
+		]
+	},
+	{
+		"name": "KPVBooklet Settings",
+		"if": "\"/mnt/us/hackedupreader/bin/cr3\" -f!",
+		"priority": 5,
+		"items": [
+
+			{
+				"name": "PDF file opened by KO* (Original)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdf=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdf=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "pdf 0",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set PDF opened by Original"
+			},
+			{
+				"name": "PDF file opened by Original* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^pdf=0$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "pdf 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set PDF opened by KOReader"
+			},
+			{
+				"name": "TXT file opened by KO* (Original)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^txt=\" -g! \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^txt=1$\" -g || ||",
+				"action": "./bin/booklet.sh",
+				"params": "txt 0",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set TXT opened by HackedUpReader"
+			},
+			{
+				"name": "TXT file opened by Original* (KO)",
+				"if": "\"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" -f \"/mnt/us/extensions/kpvbooklet/bin/booklet.ini\" \"^txt=0$\" -g &&",
+				"action": "./bin/booklet.sh",
+				"params": "txt 1",
+				"refresh": true,
+				"exitmenu": false,
+				"status": false,
+				"internal": "status set TXT opened by KOReader"
+			}
+		]
+	}
+	]
+}

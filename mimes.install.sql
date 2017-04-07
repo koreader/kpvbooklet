@@ -16,6 +16,8 @@ INSERT OR IGNORE INTO "associations" VALUES('com.github.koreader.kpvbooklet','de
 
 INSERT OR IGNORE INTO "associations" VALUES('com.github.koreader.kpvbooklet','application','MT:application/pdf','true');
 
+INSERT OR IGNORE INTO "associations" VALUES('com.github.koreader.kpvbooklet','application','MT:text/plain','true');
+
 INSERT OR IGNORE INTO "mimetypes" VALUES('djvu','MT:image/x.djvu');
 INSERT OR IGNORE INTO "extenstions" VALUES('djvu','MT:image/x.djvu');
 INSERT OR IGNORE INTO "properties" VALUES('archive.displaytags.mimetypes','image/x.djvu','DjVu');
@@ -84,3 +86,6 @@ INSERT OR IGNORE INTO "associations" VALUES('com.github.koreader.kpvbooklet','ap
 
 UPDATE "associations" SET defaultAssoc = 'false' WHERE interface = 'application' and contentId = 'MT:application/pdf' and handlerId = 'com.lab126.booklet.reader';
 UPDATE "associations" SET defaultAssoc = 'true' WHERE interface = 'application' and contentId = 'MT:application/pdf' and handlerId = 'com.github.koreader.kpvbooklet';
+
+UPDATE "associations" SET defaultAssoc = 'false' WHERE interface = 'application' and contentId = 'MT:text/plain' and handlerId = 'com.lab126.booklet.reader';
+UPDATE "associations" SET defaultAssoc = 'true' WHERE interface = 'application' and contentId = 'MT:text/plain' and handlerId = 'com.github.koreader.kpvbooklet';

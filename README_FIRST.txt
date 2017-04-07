@@ -1,7 +1,7 @@
 KPVBooklet for Kindle Touch, Kindle Paperwhite and Kindle Voyage
 =================================================
 
-KPVBooklet is a Kindle booklet for starting KOReader.
+KPVBooklet is a Kindle booklet for starting KOReader/HackedUpReader.
 It also updates last access and percentage finished information in Kindle's
 content catalog entry of the opened document.
 
