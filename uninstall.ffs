@@ -42,6 +42,9 @@ progress 50 "Restoring appreg.db"
 [ -f /var/local/appreg.db.bak ] && rm -f /var/local/appreg.db.bak
 sqlite3 /var/local/appreg.db < mimes.uninstall.sql
 
+progress 70 "Removing KUAL Extension"
+rm -rf /mnt/us/extensions/kpvbooklet
+
 progress 80 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
 

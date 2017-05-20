@@ -13,3 +13,4 @@ DELETE FROM "associations" WHERE contentId='GL:*.doc' OR contentId='GL:*.fb2' OR
 DELETE FROM "associations" WHERE contentId='GL:*.tcr' OR contentId='GL:*.xps' OR contentId='GL:*.zip';
 
 UPDATE "associations" SET defaultAssoc = 'true' WHERE interface = 'application' and contentId = 'MT:application/pdf' and handlerId = 'com.lab126.booklet.reader';
+UPDATE "associations" SET defaultAssoc = 'true' WHERE interface = 'application' and contentId = 'MT:text/plain' and handlerId = 'com.lab126.booklet.reader';

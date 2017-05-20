@@ -2,7 +2,7 @@
 
 HACKNAME="kpvbooklet"
 PKGNAME="${HACKNAME}"
-PKGVER="0.6.4"
+PKGVER="0.6.5"
 
 # We need kindletool (https://github.com/NiLuJe/KindleTool) in $PATH
 if (( $(kindletool version | wc -l) == 1 )) ; then
@@ -16,6 +16,9 @@ fi
 
 # We also need GNU tar
 TAR_BIN="tar"
+if [[ "$OSTYPE" == "darwin"* ]] ; then
+	TAR_BIN="gtar"
+fi
 if ! ${TAR_BIN} --version | grep "GNU tar" > /dev/null 2>&1 ; then
 	echo "You need GNU tar to build this package."
 	exit 1
@@ -29,6 +32,7 @@ cp -f install.ffs build/install/install.ffs
 cp -f build/jar/KPVBooklet.jar build/install/KPVBooklet.jar
 cp -f mimes.install.sql build/install/mimes.install.sql
 cp -f whispertouch.install.sql build/install/whispertouch.install.sql
+cp -rf extensions build/install/
 
 cp -f uninstall.ffs build/uninstall/uninstall.ffs
 cp -f mimes.uninstall.sql build/uninstall/mimes.uninstall.sql
