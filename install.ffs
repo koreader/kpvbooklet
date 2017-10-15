@@ -58,6 +58,7 @@ if [ "$VERSION" \> "5.4" ]; then
 fi
 
 progress 80 "Installing KUAL Extension"
+mkdir -p /mnt/us/extensions
 cp -r extensions/kpvbooklet /mnt/us/extensions/ || fail "Unable to copy KUAL Extension"
 
 progress 90 "Mounting ro"
