@@ -1,3 +1,7 @@
+2017-10-20 21:42  chrox
+
+	* fix missing booklet.sh file in 0.6.5
+
 2017-04-07 10:49  cytown
 
 	* add txt file opened by kpvbooklet
@@ -7,7 +11,7 @@
 2016-07-17 13:53  chrox
 
 	* check new document settings path for updating progress and possibly add
-    support for Kindle Oasis
+	support for Kindle Oasis
 
 2016-04-23 21:06  chrox
 
