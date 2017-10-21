@@ -58,8 +58,10 @@ if [ "$VERSION" \> "5.4" ]; then
 fi
 
 progress 80 "Installing KUAL Extension"
-mkdir -p /mnt/us/extensions
-cp -r extensions/kpvbooklet /mnt/us/extensions/ || fail "Unable to copy KUAL Extension"
+mkdir -p /mnt/us/extensions/kpvbooklet/bin
+cp extensions/kpvbooklet/bin/booklet.sh /mnt/us/extensions/kpvbooklet/bin/
+cp extensions/kpvbooklet/config.xml /mnt/us/extensions/kpvbooklet
+cp extensions/kpvbooklet/menu.json /mnt/us/extensions/kpvbooklet || fail "Unable to copy KUAL Extension"
 
 progress 90 "Mounting ro"
 mntroot ro || fail "Unable to mount ro"
