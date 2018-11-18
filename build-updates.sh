@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 HACKNAME="kpvbooklet"
 PKGNAME="${HACKNAME}"
 PKGVER="0.6.6"
