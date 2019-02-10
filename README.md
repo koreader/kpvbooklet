@@ -38,5 +38,7 @@ LICENSE for more details.
 Please include the following in any bug reports.
 
 - `showlog` output from your device
+  - requires SSH access to your device
+    - see https://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#USB_Networking
 - the firmware version of your device
 - your device model
