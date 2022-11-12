@@ -1,16 +1,25 @@
-KPVBooklet for Kindle Touch, Kindle Paperwhite, New Kindle and Kindle Voyage
-======================================
+# KPVBooklet for early Kindle 5.x
+
+----
+
+Due to the nature of this hack, and the platform it targets, it suffers from stringent technical limitations that prevent easy support for modern firmware versions.
+Given that this repository is unmaintained, and that nobody (understandably) volunteered despite the many years that have passed, this repository has been archived.
+If you're an end-user, the short of it is that this will *NOT* work on current firmware versions (in fact, it will likely only work properly on a few select very old firmware versions on a few select older devices).
+
+TL;DR: Use KUAL or [KOL](https://github.com/yparitcher/KUAL_Booklet) to launch KOReader.
+
+----
 
 KPVBooklet is a Kindle booklet for starting KoReader/HackedUpReader
 and updating last access and percentage finished information
-in Kindle content catalog entry of the opened document. 
+in Kindle content catalog entry of the opened document.
 
 User can switch the open type in KUAL KPVBooklet extentions.
 
 KPVBooklet is licensed under the MIT license. See the file
 LICENSE for more details.
 
-## building
+## Building
 
 - gather and install dependencies
   - getting kindle device jars
@@ -33,7 +42,7 @@ LICENSE for more details.
   - package
     - `./build-updates.sh`
 
-## troubleshooting
+## Troubleshooting
 
 Please include the following in any bug reports.
 
